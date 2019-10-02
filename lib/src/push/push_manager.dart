@@ -42,6 +42,7 @@
 
 import 'dart:convert';
 
+import 'package:delta_chat_core/delta_chat_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -84,6 +85,9 @@ class PushManager {
           } else {
             var pushChatMessage = _getPushChatMessage(decryptedContent);
             String fromEmail = pushChatMessage.fromEmail;
+            var context = Context();
+            var decryptInMemory = context.decryptInMemory(pushChatMessage.contentType, pushChatMessage.content, fromEmail);
+            print("[PushManager.setup] dboehrs - $decryptInMemory");
             String body = "I sent you a new chat message";
             await _notificationManager.showNotificationFromPush(fromEmail, body);
           }
