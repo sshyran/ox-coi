@@ -86,7 +86,7 @@ class PushManager {
             var pushChatMessage = _getPushChatMessage(decryptedContent);
             String fromEmail = pushChatMessage.fromEmail;
             var context = Context();
-            var decryptInMemory = context.decryptInMemory(pushChatMessage.contentType, pushChatMessage.content, fromEmail);
+            var decryptInMemory = await context.decryptInMemory(pushChatMessage.contentType, pushChatMessage.content, fromEmail);
             print("[PushManager.setup] dboehrs - $decryptInMemory");
             String body = "I sent you a new chat message";
             await _notificationManager.showNotificationFromPush(fromEmail, body);
