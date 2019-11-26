@@ -173,6 +173,7 @@ DEPENDENCIES:
   - qr_mobile_vision (from `.symlinks/plugins/qr_mobile_vision/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - SwiftyBeaver
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
 
@@ -296,6 +297,6 @@ SPEC CHECKSUMS:
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
   video_player: 69c5f029fac4ffe4fc8a85ea7f7b793709661549
 
-PODFILE CHECKSUM: f53c8197d73f82083ae50c532a15e750aa803c62
+PODFILE CHECKSUM: 51e52c97733d8fdabd4d9d51fb8690ad4fb823e8
 
 COCOAPODS: 1.8.4
