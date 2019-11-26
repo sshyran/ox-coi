@@ -1,11 +1,12 @@
 PODS:
   - "app_settings (1.0.6+2)":
     - Flutter
-  - background_fetch (0.1.1):
+  - background_fetch (0.1.0):
     - Flutter
+    - SwiftyBeaver
   - contacts_service (0.2.1):
     - Flutter
-  - delta_chat_core (0.3.0):
+  - delta_chat_core (0.4.0):
     - Flutter
     - MessageKit
     - SwiftyBeaver
@@ -158,7 +159,7 @@ DEPENDENCIES:
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
-  - Flutter (from `.symlinks/flutter/ios-release`)
+  - Flutter (from `.symlinks/flutter/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
@@ -172,7 +173,6 @@ DEPENDENCIES:
   - qr_mobile_vision (from `.symlinks/plugins/qr_mobile_vision/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
-  - SwiftyBeaver
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
 
@@ -217,7 +217,7 @@ EXTERNAL SOURCES:
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
+    :path: ".symlinks/flutter/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_sound:
@@ -251,9 +251,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_settings: 27651d311385d34d91afa163c0e4539cfd0c4c5d
-  background_fetch: 385552e57d3bde2c7a3abd6b1edc76b87823b6c4
+  background_fetch: 53e397b4d9a2fa3e9002d213cc4ccbb0393f93ec
   contacts_service: d212985196c101372bb55c42f41dae7be59ab811
-  delta_chat_core: 8cc97f5f2f6d6cc67a232240db10c6d0b661b260
+  delta_chat_core: a06bf31ab9a06208962e6dc951304d31ffd325b4
   device_info: cbf09d2ec12aa7110e0b09fabe54b5bd6c8efe74
   file_picker: 408623be2125b79a4539cf703be3d4b3abe5e245
   Firebase: 458d109512200d1aca2e1b9b6cf7d68a869a4a46
@@ -296,6 +296,6 @@ SPEC CHECKSUMS:
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
   video_player: 69c5f029fac4ffe4fc8a85ea7f7b793709661549
 
-PODFILE CHECKSUM: 51e52c97733d8fdabd4d9d51fb8690ad4fb823e8
+PODFILE CHECKSUM: f53c8197d73f82083ae50c532a15e750aa803c62
 
 COCOAPODS: 1.8.4
