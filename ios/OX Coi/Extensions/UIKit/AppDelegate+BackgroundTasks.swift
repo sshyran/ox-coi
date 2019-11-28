@@ -46,16 +46,16 @@ import Workmanager
 import UserNotifications
 
 extension AppDelegate {
-
+    
     private struct BGTaskIdentifier {
         static let Refresh = "me.coi.bgtask.fetch"
     }
-
+    
     // MARK: - Background Task Registration
-
+    
     internal func setupBackgroundTasks() {
         UserDefaults.standard.numberOfBGTaskCalls = 0
-
+        
         let registered = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
@@ -63,44 +63,45 @@ extension AppDelegate {
         }
         log.info("BG Task Registered: \(registered ? "YES" : "NO")")
     }
-
+    
     // MARK: - App Refresh Task
-
+    
     private func handleAppRefresh(task: BGAppRefreshTask) {
         scheduleAppRefresh()
-
+        
         let content = UNMutableNotificationContent()
         content.title = "Background Task says..."
         content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"
-
+        
         UserDefaults.standard.numberOfBGTaskCalls += 1
-
+        
         // Create the request
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-
+        
         // Schedule the request with the system.
-        UNUserNotificationCenter.current()
-            .add(request) { error in
-                if error != nil {
-                    log.error("Could not schedule notification: \(String(describing: error))")
-                    return
-                }
+        UNUserNotificationCenter.current().add(request) { error in
+            if error != nil {
+                log.error("Could not schedule notification: \(String(describing: error))")
+                return
             }
-
+        }
+        
         task.setTaskCompleted(success: true)
     }
 
     func scheduleAppRefresh() {
         do {
-            try WorkManager.shared.schedulePeriodicTask(withIdentifier: BGTaskIdentifier.Refresh,
-                                                        name: BGTaskIdentifier.Refresh,
-                                                        type: .refresh,
-                                                        frequency: 2 * 60)
+            let task = Task.defaultPeriodicTask(identifier: BGTaskIdentifier.Refresh,
+                                                name: BGTaskIdentifier.Refresh,
+                                                frequency: 3 * 60.0,
+                                                type: .refresh)
+            try WorkManager.shared.schedule(task: task)
+
         } catch {
             log.error("Could not schedule app refresh: \(error)")
         }
     }
-
+    
 }
 
 extension UserDefaults {
