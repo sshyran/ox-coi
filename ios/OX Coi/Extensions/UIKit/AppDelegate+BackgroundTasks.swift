@@ -54,11 +54,14 @@ extension AppDelegate {
     // MARK: - Background Task Registration
 
     internal func setupBackgroundTasks() {
-        WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
+        UserDefaults.standard.numberOfBGTaskCalls = 0
+
+        let registered = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
             }
         }
+        log.info("BG Task Registered: \(registered ? "YES" : "NO")")
     }
 
     // MARK: - App Refresh Task
@@ -67,8 +70,10 @@ extension AppDelegate {
         scheduleAppRefresh()
 
         let content = UNMutableNotificationContent()
-        content.title = "Background Tast says..."
-        content.body = "FooBar!"
+        content.title = "Background Task says..."
+        content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"
+
+        UserDefaults.standard.numberOfBGTaskCalls += 1
 
         // Create the request
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
@@ -81,17 +86,30 @@ extension AppDelegate {
                     return
                 }
             }
+
+        task.setTaskCompleted(success: true)
     }
 
     func scheduleAppRefresh() {
-        let request = BGAppRefreshTaskRequest(identifier: BGTaskIdentifier.Refresh)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 10 * 60) // Fetch no earlier than 15 minutes from now
-
         do {
-            try BGTaskScheduler.shared.submit(request)
+            try WorkManager.shared.schedulePeriodicTask(withIdentifier: BGTaskIdentifier.Refresh,
+                                                        name: BGTaskIdentifier.Refresh,
+                                                        type: .refresh,
+                                                        frequency: 2 * 60)
         } catch {
             log.error("Could not schedule app refresh: \(error)")
         }
     }
 
+}
+
+extension UserDefaults {
+    var numberOfBGTaskCalls: Int {
+        get {
+            return integer(forKey: "bgTaskCalls")
+        }
+        set {
+            set(newValue, forKey: "bgTaskCalls")
+        }
+    }
 }
