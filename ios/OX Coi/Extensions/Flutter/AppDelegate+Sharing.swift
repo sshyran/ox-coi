@@ -43,7 +43,7 @@
 import Foundation
 
 extension AppDelegate {
-
+    
     internal func setupSharingMethodChannel() {
         guard let controller = window.rootViewController as? FlutterViewController else {
             return
@@ -51,22 +51,25 @@ extension AppDelegate {
 
         let methodChannel = FlutterMethodChannel(name: INTENT_CHANNEL_NAME, binaryMessenger: controller.binaryMessenger)
         methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
-            if call.method.contains(Method.Invite.InviteLink) {
-                if let startString = self.startString {
-                    if !startString.isEmpty {
-                        result(self.startString)
-                        self.startString = nil
-                        return
+            switch call.method {
+                case Method.Invite.InviteLink:
+                    if let startString = self.startString {
+                        if !startString.isEmpty {
+                            result(self.startString)
+                            self.startString = nil
+                            return
+                        }
                     }
-                    result(nil)
 
-                } else if call.method.contains(Method.Sharing.SendSharedData) {
+                case Method.Sharing.SendSharedData:
                     if let args = call.arguments as? [String: String] {
                         self.shareFile(arguments: args)
                     }
-                    result(nil)
-                }
+
+                default:
+                    break
             }
+            result(nil)
         }
     }
 
@@ -94,6 +97,7 @@ extension AppDelegate {
 
         let activityController = UIActivityViewController(activityItems: [item], applicationActivities: nil)
         rootViewController.present(activityController, animated: true, completion: nil)
+
     }
 
 }
