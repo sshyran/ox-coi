@@ -47,9 +47,9 @@ import UIKit
 @objc
 class AppDelegate: FlutterAppDelegate {
 
-    private let INTENT_CHANNEL_NAME = "oxcoi.intent"
+    internal let INTENT_CHANNEL_NAME = "oxcoi.intent"
     private var sharedData: [String: String]?
-    var startString: String?
+    internal var startString: String?
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UIApplication.setupLogging()
@@ -63,52 +63,6 @@ class AppDelegate: FlutterAppDelegate {
         startString = url.absoluteString
         setupSharingMethodChannel()
         return true
-    }
-
-    private func setupSharingMethodChannel() {
-        guard let controller = window.rootViewController as? FlutterViewController else {
-            return
-        }
-        let methodChannel = FlutterMethodChannel(name: INTENT_CHANNEL_NAME, binaryMessenger: controller.binaryMessenger)
-        methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
-            if call.method.contains(Method.Invite.InviteLink) {
-                if self.startString != nil || self.startString != "" {
-                    result(self.startString)
-                    self.startString = nil
-                } else {
-                    result(nil)
-                }
-            } else if call.method.contains(Method.Sharing.SendSharedData) {
-                guard let args = call.arguments as? [String: String] else {
-                    result(nil)
-                    return
-                }
-                self.shareFile(arguments: args)
-                result(nil)
-            }
-        }
-    }
-    
-    private func shareFile(arguments: [String: String]) {
-        let path = arguments["path"]
-        let text = arguments["text"]
-        var itemTemp: Any?
-        
-        if path != "" {
-            itemTemp = URL(fileURLWithPath: path!)
-        }
-        if text != "" {
-            itemTemp = text
-        }
-        guard let item = itemTemp else {
-            return
-        }
-        guard let controller = window.rootViewController as? FlutterViewController else {
-            return
-        }
-        let ac = UIActivityViewController(activityItems: [item], applicationActivities: nil)
-        controller.present(ac, animated: true, completion: nil)
-        
     }
 
 }
