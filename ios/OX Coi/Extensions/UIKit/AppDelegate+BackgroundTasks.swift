@@ -91,12 +91,12 @@ extension AppDelegate {
 
     func scheduleAppRefresh() {
         do {
-            let task = Task.defaultPeriodicTask(identifier: BGTaskIdentifier.Refresh,
-                                                name: BGTaskIdentifier.Refresh,
-                                                frequency: 3 * 60.0,
-                                                type: .refresh)
+            let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh,
+                            name: BGTaskIdentifier.Refresh,
+                            type: .refresh,
+                            frequency: 2 * 60.0)
             try WorkManager.shared.schedule(task: task)
-
+            
         } catch {
             log.error("Could not schedule app refresh: \(error)")
         }
