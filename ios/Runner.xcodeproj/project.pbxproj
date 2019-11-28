@@ -21,9 +21,10 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		FD2E2E22231FFEBB00ADF5C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2E2E21231FFEBB00ADF5C5 /* AppDelegate.swift */; };
 		FD51737323266F05007458CC /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = FD51737223266F04007458CC /* .swiftlint.yml */; };
-		FD51737623267295007458CC /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51737523267295007458CC /* UIApplication+Extensions.swift */; };
+		FD51737623267295007458CC /* UIApplication+Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51737523267295007458CC /* UIApplication+Logging.swift */; };
 		FD5F8B06236AEA7500E05845 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD5F8B08236AEA7500E05845 /* InfoPlist.strings */; };
 		FD84C5D0238FD9AB0098A58B /* AppDelegate+Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD84C5CF238FD9AB0098A58B /* AppDelegate+Sharing.swift */; };
+		FD84C5D2238FE3320098A58B /* AppDelegate+BackgroundTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD84C5D1238FE3320098A58B /* AppDelegate+BackgroundTasks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -73,13 +74,14 @@
 		FD2E2E21231FFEBB00ADF5C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FD2E2E23231FFF3C00ADF5C5 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		FD51737223266F04007458CC /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
-		FD51737523267295007458CC /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
+		FD51737523267295007458CC /* UIApplication+Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Logging.swift"; sourceTree = "<group>"; };
 		FD5F8B07236AEA7500E05845 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD5F8B10236AF0EF00E05845 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD5F8B11236AF0F200E05845 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD5F8B12236AF0F400E05845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD5F8B13236AF0F600E05845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD84C5CF238FD9AB0098A58B /* AppDelegate+Sharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Sharing.swift"; sourceTree = "<group>"; };
+		FD84C5D1238FE3320098A58B /* AppDelegate+BackgroundTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+BackgroundTasks.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,7 +204,6 @@
 		FD3A797E2320058900C46411 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				FD84C5CE238FD98E0098A58B /* Flutter */,
 				FD517377232672C9007458CC /* UIKit */,
 			);
 			path = Extensions;
@@ -211,7 +212,9 @@
 		FD517377232672C9007458CC /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				FD51737523267295007458CC /* UIApplication+Extensions.swift */,
+				FD84C5D1238FE3320098A58B /* AppDelegate+BackgroundTasks.swift */,
+				FD84C5CF238FD9AB0098A58B /* AppDelegate+Sharing.swift */,
+				FD51737523267295007458CC /* UIApplication+Logging.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -222,14 +225,6 @@
 				2A955E3F238677DF00DF7F3F /* Method.swift */,
 			);
 			path = Helper;
-			sourceTree = "<group>";
-		};
-		FD84C5CE238FD98E0098A58B /* Flutter */ = {
-			isa = PBXGroup;
-			children = (
-				FD84C5CF238FD9AB0098A58B /* AppDelegate+Sharing.swift */,
-			);
-			path = Flutter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -413,7 +408,8 @@
 				2A955E40238677DF00DF7F3F /* Method.swift in Sources */,
 				FD2E2E22231FFEBB00ADF5C5 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
-				FD51737623267295007458CC /* UIApplication+Extensions.swift in Sources */,
+				FD51737623267295007458CC /* UIApplication+Logging.swift in Sources */,
+				FD84C5D2238FE3320098A58B /* AppDelegate+BackgroundTasks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

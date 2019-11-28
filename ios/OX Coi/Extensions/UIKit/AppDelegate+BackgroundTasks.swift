@@ -41,63 +41,57 @@
  */
 
 import Foundation
+import BackgroundTasks
+import Workmanager
+import UserNotifications
 
 extension AppDelegate {
-    
-    internal func setupSharingMethodChannel() {
-        guard let controller = window.rootViewController as? FlutterViewController else {
-            return
-        }
 
-        let methodChannel = FlutterMethodChannel(name: INTENT_CHANNEL_NAME, binaryMessenger: controller.binaryMessenger)
-        methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
-            switch call.method {
-                case Method.Invite.InviteLink:
-                    if let startString = self.startString {
-                        if !startString.isEmpty {
-                            result(self.startString)
-                            self.startString = nil
-                            return
-                        }
-                    }
+    private struct BGTaskIdentifier {
+        static let Refresh = "me.coi.bgtask.fetch"
+    }
 
-                case Method.Sharing.SendSharedData:
-                    if let args = call.arguments as? [String: String] {
-                        self.shareFile(arguments: args)
-                    }
+    // MARK: - Background Task Registration
 
-                default:
-                    break
+    internal func setupBackgroundTasks() {
+        WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
+            if let task = task as? BGAppRefreshTask {
+                self.handleAppRefresh(task: task)
             }
-            result(nil)
         }
     }
 
-    private func shareFile(arguments: [String: String]) {
-        var itemTemp: Any?
+    // MARK: - App Refresh Task
 
-        if let path = arguments["path"] {
-            if !path.isEmpty {
-                itemTemp = URL(fileURLWithPath: path)
+    private func handleAppRefresh(task: BGAppRefreshTask) {
+        scheduleAppRefresh()
+
+        let content = UNMutableNotificationContent()
+        content.title = "Background Tast says..."
+        content.body = "FooBar!"
+
+        // Create the request
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+
+        // Schedule the request with the system.
+        UNUserNotificationCenter.current()
+            .add(request) { error in
+                if error != nil {
+                    log.error("Could not schedule notification: \(String(describing: error))")
+                    return
+                }
             }
-        }
+    }
 
-        if let text = arguments["text"] {
-            if !text.isEmpty {
-                itemTemp = text
-            }
-        }
+    func scheduleAppRefresh() {
+        let request = BGAppRefreshTaskRequest(identifier: BGTaskIdentifier.Refresh)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 10 * 60) // Fetch no earlier than 15 minutes from now
 
-        guard let item = itemTemp else {
-            return
+        do {
+            try BGTaskScheduler.shared.submit(request)
+        } catch {
+            log.error("Could not schedule app refresh: \(error)")
         }
-        guard let rootViewController = window.rootViewController as? FlutterViewController else {
-            return
-        }
-
-        let activityController = UIActivityViewController(activityItems: [item], applicationActivities: nil)
-        rootViewController.present(activityController, animated: true, completion: nil)
-
     }
 
 }
