@@ -49,6 +49,7 @@ extension AppDelegate {
     
     private struct BGTaskIdentifier {
         static let Refresh = "me.coi.bgtask.fetch"
+        static let Processing = "me.coi.bgtask.processing"
     }
     
     // MARK: - Public API
@@ -59,19 +60,24 @@ extension AppDelegate {
         _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
-            } else if let task = task as? BGProcessingTask {
+            }
+        }
+        
+        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
+            if let task = task as? BGProcessingTask {
                 self.handleProcessing(task: task)
             }
         }
     }
 
     func scheduleAppRefreshTask() {
-        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 5 * 60.0)
+        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 15 * 60.0)
         schedule(task: task)
     }
     
     func scheduleProcessingTask() {
-        // NOTE: Nothing to schedule atm.
+        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Processing, type: .processing, frequency: 15 * 60.0)
+        schedule(task: task)
     }
     
     func stopAppRefresh() {
@@ -88,7 +94,13 @@ extension AppDelegate {
         }
 
         do {
+            task.expirationHandler = {
+                WorkManager.shared.cancelTask(withIdentifier: task.identifier)
+                task.setTaskCompleted(success: true)
+            }
+
             try WorkManager.shared.finish(task: task, success: true)
+
         } catch {
             log.error("Could not finish task: \(error)")
         }
