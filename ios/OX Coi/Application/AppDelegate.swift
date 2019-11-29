@@ -69,7 +69,7 @@ class AppDelegate: FlutterAppDelegate {
     }
 
     override func applicationDidEnterBackground(_ application: UIApplication) {
-        scheduleAppRefresh()
+        scheduleAppRefreshTask()
     }
     
     override func applicationWillEnterForeground(_ application: UIApplication) {

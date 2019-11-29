@@ -51,19 +51,35 @@ extension AppDelegate {
         static let Refresh = "me.coi.bgtask.fetch"
     }
     
-    // MARK: - Background Task Registration
+    // MARK: - Public API
     
-    internal func setupBackgroundTasks() {
+    func setupBackgroundTasks() {
         UserDefaults.standard.numberOfBGTaskCalls = 0
         
-        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh, using: .main) { task in
+        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
+            } else if let task = task as? BGProcessingTask {
+                self.handleProcessing(task: task)
             }
         }
     }
+
+    func scheduleAppRefreshTask() {
+        scheduleTask(withIdentifier: BGTaskIdentifier.Refresh, type: .refresh)
+    }
     
-    // MARK: - App Refresh Task
+    func scheduleProcessingTask() {
+        // NOTE: Nothing to schedule atm.
+    }
+    
+    func stopAppRefresh() {
+        WorkManager.shared.cancelTask(withIdentifier: BGTaskIdentifier.Refresh)
+        UserDefaults.standard.numberOfBGTaskCalls = 0
+        log.info("Cancelled app refresh task with identifier: \(BGTaskIdentifier.Refresh)")
+    }
+    
+    // MARK: - Private Helper
     
     private func handleAppRefresh(task: BGAppRefreshTask) {
         showNotification()
@@ -74,23 +90,19 @@ extension AppDelegate {
             log.error("Could not finish task: \(error)")
         }
     }
+    
+    private func handleProcessing(task: BGProcessingTask) {
+        // NOTE: Nothing to schedule atm.
+    }
 
-    func scheduleAppRefresh() {
+    private func scheduleTask(withIdentifier identifier: String, type: TaskType) {
         do {
-            let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh,
-                            name: BGTaskIdentifier.Refresh,
-                            type: .refresh,
-                            frequency: 6 * 60.0)
+            let task = Task(periodicTaskWithIdentifier: identifier, type: type, frequency: 5 * 60.0)
             try WorkManager.shared.schedule(task: task)
             
         } catch {
             log.error("Could not schedule app refresh: \(error)")
         }
-    }
-    
-    func stopAppRefresh() {
-        WorkManager.shared.cancelTask(withIdentifier: BGTaskIdentifier.Refresh)
-        log.info("Cancelled app refresh task with identifier: \(BGTaskIdentifier.Refresh)")
     }
     
     // MARK: - Temp Stuff
