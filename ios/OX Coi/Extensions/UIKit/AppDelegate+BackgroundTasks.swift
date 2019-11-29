@@ -61,14 +61,38 @@ extension AppDelegate {
                 self.handleAppRefresh(task: task)
             }
         }
+
         log.info("BG Task Registered: \(registered ? "YES" : "NO")")
     }
     
     // MARK: - App Refresh Task
     
     private func handleAppRefresh(task: BGAppRefreshTask) {
-        scheduleAppRefresh()
-        
+        showNotification()
+
+        do {
+            try WorkManager.shared.finish(task: task, success: true)
+        } catch {
+            log.error("Could not finish task: \(error)")
+        }
+    }
+
+    func scheduleAppRefresh() {
+        do {
+            let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh,
+                            name: BGTaskIdentifier.Refresh,
+                            type: .refresh,
+                            frequency: 3 * 30.0)
+            try WorkManager.shared.schedule(task: task)
+            
+        } catch {
+            log.error("Could not schedule app refresh: \(error)")
+        }
+    }
+    
+    // MARK: - Temp Stuff
+    
+    private func showNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Background Task says..."
         content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"
@@ -84,21 +108,6 @@ extension AppDelegate {
                 log.error("Could not schedule notification: \(String(describing: error))")
                 return
             }
-        }
-        
-        task.setTaskCompleted(success: true)
-    }
-
-    func scheduleAppRefresh() {
-        do {
-            let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh,
-                            name: BGTaskIdentifier.Refresh,
-                            type: .refresh,
-                            frequency: 2 * 60.0)
-            try WorkManager.shared.schedule(task: task)
-            
-        } catch {
-            log.error("Could not schedule app refresh: \(error)")
         }
     }
     
