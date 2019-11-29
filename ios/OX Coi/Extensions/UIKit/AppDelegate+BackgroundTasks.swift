@@ -56,13 +56,11 @@ extension AppDelegate {
     internal func setupBackgroundTasks() {
         UserDefaults.standard.numberOfBGTaskCalls = 0
         
-        let registered = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
+        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh, using: .main) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
             }
         }
-
-        log.info("BG Task Registered: \(registered ? "YES" : "NO")")
     }
     
     // MARK: - App Refresh Task
@@ -82,12 +80,17 @@ extension AppDelegate {
             let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh,
                             name: BGTaskIdentifier.Refresh,
                             type: .refresh,
-                            frequency: 3 * 30.0)
+                            frequency: 6 * 60.0)
             try WorkManager.shared.schedule(task: task)
             
         } catch {
             log.error("Could not schedule app refresh: \(error)")
         }
+    }
+    
+    func stopAppRefresh() {
+        WorkManager.shared.cancelTask(withIdentifier: BGTaskIdentifier.Refresh)
+        log.info("Cancelled app refresh task with identifier: \(BGTaskIdentifier.Refresh)")
     }
     
     // MARK: - Temp Stuff
@@ -96,8 +99,6 @@ extension AppDelegate {
         let content = UNMutableNotificationContent()
         content.title = "Background Task says..."
         content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"
-        
-        UserDefaults.standard.numberOfBGTaskCalls += 1
         
         // Create the request
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
@@ -108,6 +109,8 @@ extension AppDelegate {
                 log.error("Could not schedule notification: \(String(describing: error))")
                 return
             }
+            log.info("** Background Push-Notification sent [#\(UserDefaults.standard.numberOfBGTaskCalls)]. **")
+            UserDefaults.standard.numberOfBGTaskCalls += 1
         }
     }
     
