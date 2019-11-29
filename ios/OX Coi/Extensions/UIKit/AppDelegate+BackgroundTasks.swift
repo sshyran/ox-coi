@@ -66,7 +66,8 @@ extension AppDelegate {
     }
 
     func scheduleAppRefreshTask() {
-        scheduleTask(withIdentifier: BGTaskIdentifier.Refresh, type: .refresh)
+        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 5 * 60.0)
+        schedule(task: task)
     }
     
     func scheduleProcessingTask() {
@@ -82,7 +83,9 @@ extension AppDelegate {
     // MARK: - Private Helper
     
     private func handleAppRefresh(task: BGAppRefreshTask) {
-        showNotification()
+        DispatchQueue.main.async {
+            self.showNotification()
+        }
 
         do {
             try WorkManager.shared.finish(task: task, success: true)
@@ -95,9 +98,8 @@ extension AppDelegate {
         // NOTE: Nothing to schedule atm.
     }
 
-    private func scheduleTask(withIdentifier identifier: String, type: TaskType) {
+    private func schedule(task: Task) {
         do {
-            let task = Task(periodicTaskWithIdentifier: identifier, type: type, frequency: 5 * 60.0)
             try WorkManager.shared.schedule(task: task)
             
         } catch {
