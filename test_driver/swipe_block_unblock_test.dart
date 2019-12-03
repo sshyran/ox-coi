@@ -39,7 +39,7 @@
  *  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *  * or FITNESS FOR A PARTICULAR PURPOSE. See the Mozilla Public License 2.0
  *  * for more details.
- *  
+ *
  *
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -53,10 +53,12 @@
  */
 
 import 'package:flutter_driver/flutter_driver.dart';
+import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:test/test.dart';
 import 'package:test_api/src/backend/invoker.dart';
 
 import 'setup/global_consts.dart';
+import 'setup/global_consts.dart' as prefix0;
 import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
@@ -65,19 +67,10 @@ void main() {
     //  Define the driver.
     FlutterDriver driver;
     Setup setup = new Setup(driver);
-    setup.main();
 
-    final openChat = 'Open chat';
-    final flagUnFlag = 'Flag/Unflag';
-    final forward = 'Forward';
-    final textToDelete = 'Text to delete';
-    final paste = 'PASTE';
-    final copy = 'Copy';
+    final block = 'Block';
 
-    final meContactFinder = find.text(meContact);
-    final textToDeleteFinder = find.text(textToDelete);
-
-    test('Test block / unblock functionality.', () async {
+    test('Get login and create one contact.', () async {
       //  Check real authentication and get chat.
       await getAuthentication(
         setup.driver,
@@ -96,9 +89,9 @@ void main() {
       //  Get contacts and add new contacts.
       await setup.driver.tap(contactsFinder);
       await setup.driver.tap(cancelFinder);
-      await setup.driver.waitFor(meContactFinder);
+      await setup.driver.waitFor(find.text(meContact));
 
-      //  Add two new contacts in the contact list.
+      // Add two new contacts in the contact list.
       await addNewContact(
         setup.driver,
         personAddFinder,
@@ -108,45 +101,33 @@ void main() {
         newTestContact04,
         keyContactChangeCheckFinder,
       );
+    });
 
-      //  Create chat and write something.
-      await setup.driver.tap(meContactFinder);
-      await setup.driver.tap(find.text(openChat));
-      await writeChatFromChat(setup.driver, helloWorld);
-
-      //  First test action: Flagged messages from  meChat.
-      await flaggedMessage(setup.driver, flagUnFlag, helloWorldFinder);
-
-      await setup.driver.tap(pageBack);
+    test(': Test block functionality.\n', () async {
+      await setup.driver.scroll(find.text(newTestName01), 75, 0, Duration(milliseconds: 100));
+      await setup.driver.tap(find.text(block));
+      await catchScreenshot(setup.driver, 'screenshots/contactListAfterBlock.png');
+      await setup.driver.waitForAbsent(find.text(newTestName01));
       await navigateTo(setup.driver, chat);
+      await navigateTo(setup.driver, contacts);
+      await setup.driver.waitForAbsent(find.text(newTestName01));
+    });
 
-      //  Second test action: UnFlagged messages.
-      await unFlaggedMessage(setup.driver, flagUnFlag, helloWorldFinder);
-      await setup.driver.waitForAbsent(helloWorldFinder);
+    test(': Test unblock functionality.\n', () async {
+      await setup.driver.tap(find.byValueKey(keyContactListBlockIconButton));
+      await setup.driver.waitFor(find.text(newTestName01));
+      await catchScreenshot(setup.driver, 'screenshots/blockedList.png');
+      await setup.driver.scroll(find.text(newTestName01), 75, 0, Duration(milliseconds: 100));
+      await setup.driver.tap(find.text('Unblock'));
+      await setup.driver.waitForAbsent(find.text(newTestName01));
+      await setup.driver.tap(find.byValueKey(keyContactBlockedListCloseIconButton));
+    });
 
-      //  Return to chatList.
-      await setup.driver.tap(pageBack);
-      await setup.driver.tap(meContactFinder);
-
-      //  Third test action: Forward message.
-      await forwardMessageTo(setup.driver, newTestName01, forward);
-      await setup.driver.waitFor(helloWorldFinder);
-
-      //  Return to chatList.
-      await setup.driver.tap(pageBack);
-      await setup.driver.tap(meContactFinder);
-
-      //  Forth test action: Copy message from meContact and it paste in meContact.
-      await copyAndPasteMessage(setup.driver, copy, paste);
-
-      //  Enter new text to delete.
-      await writeTextInChat(setup.driver, textToDelete);
-      await setup.driver.waitFor(textToDeleteFinder);
-      await catchScreenshot(setup.driver, 'screenshots/addTextToDelete.png');
-
-      //  Fifth test action: Delete message.
-      await deleteMessage(textToDeleteFinder, setup.driver);
-      await setup.driver.waitForAbsent(textToDeleteFinder);
+    test(': Test if block and unblock are really been done\n', () async {
+      await setup.driver.waitFor(find.text(newTestName01));
+      await catchScreenshot(setup.driver, 'screenshots/afterUnblock.png');
+      await setup.driver.tap(find.byValueKey(keyContactListBlockIconButton));
+      await setup.driver.waitForAbsent(find.text(newTestName01));
     });
   });
 }
