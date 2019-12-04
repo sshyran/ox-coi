@@ -40,6 +40,7 @@
  * for more details.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,7 +84,33 @@ class _ContactBlockedListState extends State<ContactBlockedList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AdaptiveAppBar(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            /*expandedHeight: 220.0,
+            floating: true,
+            pinned: true,
+            snap: true,
+            elevation: 50,
+            backgroundColor: Colors.pink,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: false,
+              title: Text(L10n.get(L.contactBlocked)),
+            ),*/
+            largeTitle: Text(L10n.get(L.contactBlocked)),
+            automaticallyImplyLeading: true,
+
+          ),
+          new SliverList(
+              delegate: new SliverChildListDelegate(_buildList(50))
+          ),
+        ],
+      ),
+        );
+
+
+
+        /*appBar: AdaptiveAppBar(
           leadingIcon: new AdaptiveIconButton(
             icon: new AdaptiveIcon(
               icon: IconSource.close,
@@ -94,7 +121,22 @@ class _ContactBlockedListState extends State<ContactBlockedList> {
           title: Text(L10n.get(L.contactBlocked)),
 
         ),
-        body: buildForm());
+        body: buildForm());*/
+  }
+
+  List _buildList(int count) {
+    List<Widget> listItems = List();
+
+    for (int i = 0; i < count; i++) {
+      listItems.add(new Padding(padding: new EdgeInsets.all(20.0),
+          child: new Text(
+              'Item ${i.toString()}',
+              style: new TextStyle(fontSize: 25.0)
+          )
+      ));
+    }
+
+    return listItems;
   }
 
   Widget buildForm() {
