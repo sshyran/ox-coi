@@ -63,15 +63,15 @@ extension AppDelegate {
             }
         }
         
-        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
-            if let task = task as? BGProcessingTask {
-                self.handleProcessing(task: task)
-            }
-        }
+//        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
+//            if let task = task as? BGProcessingTask {
+//                self.handleProcessing(task: task)
+//            }
+//        }
     }
 
     func scheduleAppRefreshTask() {
-        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 15 * 60.0)
+        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 2 * 60.0)
         schedule(task: task)
     }
     
@@ -88,7 +88,7 @@ extension AppDelegate {
     
     // MARK: - Private Helper
     
-    private func handleAppRefresh(task: BGAppRefreshTask) {
+    fileprivate func handleAppRefresh(task: BGAppRefreshTask) {
         DispatchQueue.main.async {
             self.showNotification()
         }
@@ -106,11 +106,11 @@ extension AppDelegate {
         }
     }
     
-    private func handleProcessing(task: BGProcessingTask) {
+    fileprivate func handleProcessing(task: BGProcessingTask) {
         // NOTE: Nothing to schedule atm.
     }
 
-    private func schedule(task: Task) {
+    fileprivate func schedule(task: Task) {
         do {
             try WorkManager.shared.schedule(task: task)
             
@@ -121,7 +121,7 @@ extension AppDelegate {
     
     // MARK: - Temp Stuff
     
-    private func showNotification() {
+    fileprivate func showNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Background Task says..."
         content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"

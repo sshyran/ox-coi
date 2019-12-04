@@ -4,6 +4,7 @@ disabled_rules:
   - explicit_top_level_acl
   - explicit_type_interface
   - file_header
+  - strict_fileprivate
   - function_body_length
   - identifier_name
   - implicitly_unwrapped_optional

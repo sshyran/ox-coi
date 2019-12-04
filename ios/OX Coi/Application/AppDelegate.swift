@@ -58,6 +58,23 @@ class AppDelegate: FlutterAppDelegate {
         setupBackgroundTasks()
         setupSharingMethodChannel()
 
+/*
+        [notificationCenter addObserver:self
+                               selector:@selector(iOSApplicationWillEnterForeground:)
+                                   name:UISceneWillEnterForegroundNotification
+                                 object:nil];
+        [notificationCenter addObserver:self
+                               selector:@selector(iOSApplicationDidEnterBackground:)
+                                   name:UISceneWillDeactivateNotification
+                                 object:nil];
+
+ */
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(coiWillEnterForeground(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(coiWillEnterForeground(notification:)), name: UIScene.willEnterForegroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(coiDidEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(coiDidEnterBackground(notification:)), name: UIScene.didEnterBackgroundNotification, object: nil)
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -67,17 +84,35 @@ class AppDelegate: FlutterAppDelegate {
 
         return true
     }
+    
+    @objc
+    func coiWillEnterForeground(notification: Notification) {
+        self.stopAppRefresh()
+    }
+    
+    @objc
+    func coiDidEnterBackground(notification: Notification) {
+        self.scheduleAppRefreshTask()
+    }
 
-    override func applicationDidEnterBackground(_ application: UIApplication) {
-        scheduleAppRefreshTask()
-    }
-    
-    override func applicationWillEnterForeground(_ application: UIApplication) {
-        stopAppRefresh()
-    }
-    
-    override func applicationWillTerminate(_ application: UIApplication) {
-        stopAppRefresh()
-    }
+//    func sceneDidEnterBackground(_ scene: UIScene) {
+//        scheduleAppRefreshTask()
+//    }
+//    
+//    func sceneWillEnterForeground(_ scene: UIScene) {
+//        stopAppRefresh()
+//    }
+
+//    override func applicationDidEnterBackground(_ application: UIApplication) {
+//        scheduleAppRefreshTask()
+//    }
+//
+//    override func applicationWillEnterForeground(_ application: UIApplication) {
+//        stopAppRefresh()
+//    }
+//
+//    override func applicationWillTerminate(_ application: UIApplication) {
+//        stopAppRefresh()
+//    }
 
 }

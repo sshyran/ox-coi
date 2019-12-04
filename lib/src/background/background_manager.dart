@@ -40,6 +40,8 @@
  * for more details.
  */
 
+import 'dart:developer';
+
 import 'package:background_fetch/background_fetch.dart';
 import 'package:delta_chat_core/delta_chat_core.dart';
 import 'package:logging/logging.dart';
@@ -50,6 +52,7 @@ void backgroundHeadlessTask() async {
   var core = DeltaChatCore();
   var init = await core.init(dbName);
   if (init) {
+    log("** backgroundHeadlessTask() **");
     await getMessages();
     await core.stop();
   }
