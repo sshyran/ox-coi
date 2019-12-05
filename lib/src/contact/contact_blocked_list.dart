@@ -86,7 +86,13 @@ class _ContactBlockedListState extends State<ContactBlockedList> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          CupertinoSliverNavigationBar(
+      CupertinoTheme(
+      data: CupertinoThemeData(
+        brightness: Brightness.dark,
+        primaryColor: onPrimary,
+        barBackgroundColor: primary,
+      ),
+          child: CupertinoSliverNavigationBar(
             /*expandedHeight: 220.0,
             floating: true,
             pinned: true,
@@ -97,12 +103,31 @@ class _ContactBlockedListState extends State<ContactBlockedList> {
               centerTitle: false,
               title: Text(L10n.get(L.contactBlocked)),
             ),*/
+            actionsForegroundColor: Colors.white,
             largeTitle: Text(L10n.get(L.contactBlocked)),
             automaticallyImplyLeading: true,
-
+          ),
           ),
           new SliverList(
-              delegate: new SliverChildListDelegate(_buildList(50))
+              delegate: new SliverChildListDelegate(
+                [
+                  Container(color: Colors.red, height: 150.0),
+                  Container(color: Colors.purple, height: 150.0),
+                  Container(color: Colors.green, height: 150.0),
+                  Container(color: Colors.red, height: 150.0),
+                  Container(color: Colors.purple, height: 150.0),
+                  Container(color: Colors.green, height: 150.0),
+                  Container(color: Colors.red, height: 150.0),
+                  Container(color: Colors.purple, height: 150.0),
+                  Container(color: Colors.green, height: 150.0),
+                  Container(color: Colors.red, height: 150.0),
+                  Container(color: Colors.purple, height: 150.0),
+                  Container(color: Colors.green, height: 150.0),
+                  Container(color: Colors.red, height: 150.0),
+                  Container(color: Colors.purple, height: 150.0),
+                  Container(color: Colors.green, height: 150.0),
+                ],
+              )
           ),
         ],
       ),
@@ -122,21 +147,6 @@ class _ContactBlockedListState extends State<ContactBlockedList> {
 
         ),
         body: buildForm());*/
-  }
-
-  List _buildList(int count) {
-    List<Widget> listItems = List();
-
-    for (int i = 0; i < count; i++) {
-      listItems.add(new Padding(padding: new EdgeInsets.all(20.0),
-          child: new Text(
-              'Item ${i.toString()}',
-              style: new TextStyle(fontSize: 25.0)
-          )
-      ));
-    }
-
-    return listItems;
   }
 
   Widget buildForm() {
