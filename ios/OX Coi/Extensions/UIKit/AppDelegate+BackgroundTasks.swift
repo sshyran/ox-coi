@@ -49,7 +49,6 @@ extension AppDelegate {
     
     private struct BGTaskIdentifier {
         static let Refresh = "me.coi.bgtask.fetch"
-        static let Processing = "me.coi.bgtask.processing"
     }
     
     // MARK: - Public API
@@ -62,25 +61,14 @@ extension AppDelegate {
                 self.handleAppRefresh(task: task)
             }
         }
-        
-//        _ = WorkManager.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
-//            if let task = task as? BGProcessingTask {
-//                self.handleProcessing(task: task)
-//            }
-//        }
     }
 
     func scheduleAppRefreshTask() {
-        let frequency: TimeInterval = 4 * 60.0
+        let frequency: TimeInterval = 5 * 60.0
         var task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: frequency)
-        task.initialDelay = 60
+        task.initialDelay = 120
         schedule(task: task)
     }
-    
-//    func scheduleProcessingTask() {
-//        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Processing, type: .processing, frequency: 15 * 60.0)
-//        schedule(task: task)
-//    }
     
     func stopAppRefresh() {
         WorkManager.shared.cancelTask(withIdentifier: BGTaskIdentifier.Refresh)
