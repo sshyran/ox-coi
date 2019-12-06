@@ -78,4 +78,10 @@ post_install do |installer|
       end
     end
   end
+  installer.pods_project.build_configurations.each do |config|
+      if config.name.include?("Debug")
+          config.build_settings['GCC_OPTIMIZATION_LEVEL'] = '0'
+          config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
+      end
+  end
 end
