@@ -57,13 +57,13 @@ extension AppDelegate {
     func setupBackgroundTasks() {
         UserDefaults.standard.numberOfBGTaskCalls = 0
         
-        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
+        _ = WorkManager.registerTask(withIdentifier: BGTaskIdentifier.Refresh) { task in
             if let task = task as? BGAppRefreshTask {
                 self.handleAppRefresh(task: task)
             }
         }
         
-//        _ = WorkManager.shared.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
+//        _ = WorkManager.registerTask(withIdentifier: BGTaskIdentifier.Processing) { task in
 //            if let task = task as? BGProcessingTask {
 //                self.handleProcessing(task: task)
 //            }
@@ -71,14 +71,14 @@ extension AppDelegate {
     }
 
     func scheduleAppRefreshTask() {
-        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 2 * 60.0)
+        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 5 * 60.0)
         schedule(task: task)
     }
     
-    func scheduleProcessingTask() {
-        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Processing, type: .processing, frequency: 15 * 60.0)
-        schedule(task: task)
-    }
+//    func scheduleProcessingTask() {
+//        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Processing, type: .processing, frequency: 15 * 60.0)
+//        schedule(task: task)
+//    }
     
     func stopAppRefresh() {
         WorkManager.shared.cancelTask(withIdentifier: BGTaskIdentifier.Refresh)
