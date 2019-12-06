@@ -71,7 +71,9 @@ extension AppDelegate {
     }
 
     func scheduleAppRefreshTask() {
-        let task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: 5 * 60.0)
+        let frequency: TimeInterval = 4 * 60.0
+        var task = Task(periodicTaskWithIdentifier: BGTaskIdentifier.Refresh, type: .refresh, frequency: frequency)
+        task.initialDelay = 60
         schedule(task: task)
     }
     

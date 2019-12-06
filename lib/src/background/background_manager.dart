@@ -52,7 +52,8 @@ void backgroundHeadlessTask() async {
   var core = DeltaChatCore();
   var init = await core.init(dbName);
   if (init) {
-    log("** backgroundHeadlessTask() **");
+    final Logger _logger = Logger("backgroundHeadlessTask");
+    _logger.info("** backgroundHeadlessTask() **");
     await getMessages();
     await core.stop();
   }
