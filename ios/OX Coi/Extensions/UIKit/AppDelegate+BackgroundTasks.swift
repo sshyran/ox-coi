@@ -40,15 +40,35 @@
  * for more details.
  */
 
+// https://github.com/vrtdev/flutter_workmanager/blob/master/ios/Classes/SwiftWorkmanagerPlugin.swift
+
 import Foundation
 import BackgroundTasks
 import Workmanager
 import UserNotifications
 
-extension AppDelegate {
+extension AppDelegate: FlutterStreamHandler {
     
     private struct BGTaskIdentifier {
         static let Refresh = "me.coi.bgtask.fetch"
+    }
+    
+    private struct BGChannel {
+        static let Path = "com.transistorsoft/flutter_background_fetch"
+        
+        struct Name {
+            static let Method = "methods"
+            static let Event = "events"
+        }
+        
+        struct Action {
+            static let Configure = "configure"
+            static let Start = "start"
+            static let Stop = "stop"
+            static let Finish = "finish"
+            static let Status = "status"
+            static let Register = "registerHeadlessTask"
+        }
     }
     
     // MARK: - Public API
@@ -61,6 +81,15 @@ extension AppDelegate {
                 self.handleAppRefresh(task: task)
             }
         }
+        
+        // Register Method-Channel
+        if let flutterEngine = FlutterEngine(name: BGTaskIdentifier.Refresh, project: nil, allowHeadlessExecution: true) {
+            let methodChannel = FlutterMethodChannel(name: "\(BGChannel.Path)/\(BGChannel.Name.Method)", binaryMessenger: flutterEngine.binaryMessenger)
+            methodChannel.setMethodCallHandler { call, result in
+                self.handle(call: call, result: result)
+            }
+        }
+        
     }
 
     func scheduleAppRefreshTask() {
@@ -76,6 +105,45 @@ extension AppDelegate {
         log.info("Cancelled app refresh task with identifier: \(BGTaskIdentifier.Refresh)")
     }
     
+    // MARK: - Handle Flutter Method Calls
+    
+    fileprivate func handle(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        switch call.method {
+            case BGChannel.Name.Method:
+                if let arguments = call.arguments as? [String: Any],
+                    let callbackHandle = arguments[] as Int64 {
+                    
+                    result(true)
+                    return
+                }
+                result(false)
+            
+            default:
+                result(FlutterMethodNotImplemented)
+        }
+        switch (call.method, call.arguments as? [AnyHashable: Any]) {
+//        case (ForegroundMethodChannel.methods.initialize.name, let .some(arguments)):
+//            let isInDebug = arguments[ForegroundMethodChannel.methods.initialize.arguments.isInDebugMode.rawValue] as! Bool
+//            let handle = arguments[ForegroundMethodChannel.methods.initialize.arguments.callbackHandle.rawValue] as! Int64
+//            UserDefaultsHelper.storeCallbackHandle(handle)
+//            UserDefaultsHelper.storeIsDebug(isInDebug)
+//            result(true)
+//        default:
+//            result(WMPError.unhandledMethod(call.method).asFlutterError)
+//            return
+//        }
+    }
+    
+    // MARK: - FlutterStreamHandler
+
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        return nil
+    }
+    
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        return nil
+    }
+
     // MARK: - Private Helper
     
     fileprivate func handleAppRefresh(task: BGAppRefreshTask) {
@@ -132,13 +200,46 @@ extension AppDelegate {
     
 }
 
+// MARK: -
+
 extension UserDefaults {
+
+    fileprivate enum Key {
+        case numberOfBGTaskCalls
+        case callbackHandle
+        
+        var stringValue: String {
+            return "\(WorkManager.identifier).\(self)"
+        }
+    }
+    
+    // MARK: - Public Properties
+    
     var numberOfBGTaskCalls: Int {
         get {
-            return integer(forKey: "bgTaskCalls")
+            return value(for: .numberOfBGTaskCalls)!
         }
         set {
-            set(newValue, forKey: "bgTaskCalls")
+            store(value: newValue, for: .numberOfBGTaskCalls)
         }
+    }
+    
+    var callbackHandle: Int64 {
+        get {
+            return value(for: .callbackHandle)!
+        }
+        set {
+            store(value: newValue, for: .callbackHandle)
+        }
+    }
+
+    // MARK: - Private Helper
+    
+    fileprivate func store<T>(value: T, for key: Key) {
+        set(value, forKey: key.stringValue)
+    }
+
+    fileprivate func value<T>(for key: Key) -> T? {
+        return value(forKey: key.stringValue) as? T
     }
 }
