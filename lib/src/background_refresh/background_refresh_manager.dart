@@ -68,16 +68,16 @@ Future<void> getMessages() async {
   await localPushManager.triggerLocalPush();
 }
 
-class BackgroundManager {
-  final Logger _logger = Logger("background_manager");
+class BackgroundRefreshManager {
+  final Logger _logger = Logger("background_refresh_manager");
 
-  static BackgroundManager _instance;
+  static BackgroundRefreshManager _instance;
 
   bool _running = false;
 
-  factory BackgroundManager() => _instance ??= BackgroundManager._internal();
+  factory BackgroundRefreshManager() => _instance ??= BackgroundRefreshManager._internal();
 
-  BackgroundManager._internal();
+  BackgroundRefreshManager._internal();
 
   setupAndStart() {
     BackgroundFetch.registerHeadlessTask(backgroundHeadlessTask);

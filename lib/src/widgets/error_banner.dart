@@ -39,42 +39,60 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the Mozilla Public License 2.0
  * for more details.
  */
+ 
+import 'package:flutter/material.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon_button.dart';
+import 'package:ox_coi/src/ui/color.dart';
+import 'package:ox_coi/src/ui/dimensions.dart';
 
-import 'dart:async';
-import 'dart:ui';
+class ErrorBanner extends StatelessWidget {
+  final Function closePressed;
+  final String message;
 
-import 'package:bloc/bloc.dart';
-import 'package:flutter/services.dart';
-
-import 'background_event_state.dart';
-
-class BackgroundBloc extends Bloc<BackgroundEvent, BackgroundState> {
-  String _currentBackgroundState;
-
-  String get currentBackgroundState => _currentBackgroundState;
-
-  @override
-  BackgroundState get initialState => BackgroundStateInitial();
+  ErrorBanner({@required this.closePressed, @required this.message});
 
   @override
-  Stream<BackgroundState> mapEventToState(BackgroundEvent event) async* {
-    if (event is BackgroundListenerSetup) {
-      try {
-        setup();
-      } catch (error) {
-        yield BackgroundStateFailure();
-      }
-    } else if (event is BackgroundStateChange) {
-      _currentBackgroundState = event.state;
-      yield BackgroundStateSuccess(state: _currentBackgroundState);
-    }
-  }
-
-  void setup() {
-    SystemChannels.lifecycle.setMessageHandler((state) async {
-      add(BackgroundStateChange(state: state));
-      return state;
-    });
-    add(BackgroundStateChange(state: AppLifecycleState.resumed.toString()));
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: errorBannerPositionLeft,
+      right: errorBannerPositionRight,
+      top: errorBannerPositionTop,
+      height: loginErrorOverlayHeight,
+      child: Material(
+        elevation: errorBannerElevation,
+        color: error,
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: loginErrorOverlayLeftPadding),
+            ),
+            AdaptiveIcon(
+              icon: IconSource.reportProblem,
+              size: iconSize,
+              color: onError,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: loginErrorOverlayLeftPadding),
+            ),
+            Container(
+              child: Expanded(
+                child: Text(
+                  message,
+                  style: Theme.of(context).textTheme.body1.apply(color: onError),
+                ),
+              ),
+            ),
+            AdaptiveIconButton(
+                icon: AdaptiveIcon(
+                  icon: IconSource.clear,
+                  size: loginErrorOverlayIconSize,
+                  color: onError,
+                ),
+                onPressed: closePressed),
+          ],
+        ),
+      ),
+    );
   }
 }
