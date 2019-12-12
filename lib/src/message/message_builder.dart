@@ -48,6 +48,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
+import 'package:ox_coi/src/l10n/l.dart';
+import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/message/message_attachment_bloc.dart';
 import 'package:ox_coi/src/message/message_attachment_event_state.dart';
 import 'package:ox_coi/src/message/message_item_bloc.dart';
@@ -119,6 +121,33 @@ class MessageText extends StatelessWidget {
     );
   }
 }
+
+class MessagePartForwarded extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var messageStateData = _getMessageStateData(context);
+    Color color = messageStateData.isOutgoing ? onSecondary.withOpacity(half) : onSurface.withOpacity(half);
+    double topPadding = messageStateData.isGroup && !messageStateData.isOutgoing ? messagesForwardTopPaddingGroup : messagesForwardTopPadding;
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding, left: messagesHorizontalInnerPadding, right: messagesHorizontalInnerPadding,),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AdaptiveIcon(
+            icon: IconSource.forward,
+            color: color,
+            size: messagesForwardIconSize,
+          ),
+          Text(
+            L10n.get(L.forwarded),
+            style: Theme.of(context).textTheme.caption.apply(color: color),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
 String _getText(BuildContext context) {
   return MessageData.of(context).useInformationText ? _getMessageStateData(context).informationText : _getMessageStateData(context).text;
@@ -505,7 +534,7 @@ class MessagePartFlag extends StatelessWidget {
 
 EdgeInsetsGeometry getNamePaddingForGroups(BuildContext context) {
   var messageStateData = _getMessageStateData(context);
-  if (messageStateData.isGroup && !messageStateData.isOutgoing) {
+  if (messageStateData.isGroup && !messageStateData.isOutgoing || messageStateData.isForwarded) {
     return EdgeInsets.only(
       top: 2.0,
       bottom: messagesVerticalInnerPadding,

@@ -126,6 +126,9 @@ const messagesBoxRadiusSmall = 2.0;
 const messagesBlurRadius = 2.0;
 const messagesFileIconSize = 30.0;
 const messagesElevation = 3.0;
+const messagesForwardIconSize = 16.0;
+const messagesForwardTopPadding = 8.0;
+const messagesForwardTopPaddingGroup = 2.0;
 
 // Profile
 const profileVerticalPadding = 8.0;
