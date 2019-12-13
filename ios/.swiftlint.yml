@@ -16,6 +16,7 @@ disabled_rules:
   - sorted_imports
   - todo # next to enable again
   - trailing_whitespace
+  - switch_case_alignment
   - xctfail_message
 excluded:
   - Pods
