@@ -121,17 +121,17 @@ extension AppDelegate: FlutterStreamHandler {
             default:
                 result(FlutterMethodNotImplemented)
         }
-        switch (call.method, call.arguments as? [AnyHashable: Any]) {
-//        case (ForegroundMethodChannel.methods.initialize.name, let .some(arguments)):
-//            let isInDebug = arguments[ForegroundMethodChannel.methods.initialize.arguments.isInDebugMode.rawValue] as! Bool
-//            let handle = arguments[ForegroundMethodChannel.methods.initialize.arguments.callbackHandle.rawValue] as! Int64
-//            UserDefaultsHelper.storeCallbackHandle(handle)
-//            UserDefaultsHelper.storeIsDebug(isInDebug)
-//            result(true)
-//        default:
-//            result(WMPError.unhandledMethod(call.method).asFlutterError)
-//            return
-//        }
+        //        switch (call.method, call.arguments as? [AnyHashable: Any]) {
+        //        case (ForegroundMethodChannel.methods.initialize.name, let .some(arguments)):
+        //            let isInDebug = arguments[ForegroundMethodChannel.methods.initialize.arguments.isInDebugMode.rawValue] as! Bool
+        //            let handle = arguments[ForegroundMethodChannel.methods.initialize.arguments.callbackHandle.rawValue] as! Int64
+        //            UserDefaultsHelper.storeCallbackHandle(handle)
+        //            UserDefaultsHelper.storeIsDebug(isInDebug)
+        //            result(true)
+        //        default:
+        //            result(WMPError.unhandledMethod(call.method).asFlutterError)
+        //            return
+        //        }
     }
     
     // MARK: - FlutterStreamHandler
@@ -146,7 +146,7 @@ extension AppDelegate: FlutterStreamHandler {
 
     // MARK: - Private Helper
     
-    fileprivate func handleAppRefresh(task: BGAppRefreshTask) {
+    func handleAppRefresh(task: BGAppRefreshTask) {
         DispatchQueue.main.async {
             self.showNotification()
         }
@@ -164,11 +164,11 @@ extension AppDelegate: FlutterStreamHandler {
         }
     }
     
-    fileprivate func handleProcessing(task: BGProcessingTask) {
+    func handleProcessing(task: BGProcessingTask) {
         // NOTE: Nothing to schedule atm.
     }
 
-    fileprivate func schedule(task: Task) {
+    func schedule(task: Task) {
         do {
             try WorkManager.shared.schedule(task: task)
             
@@ -179,7 +179,7 @@ extension AppDelegate: FlutterStreamHandler {
     
     // MARK: - Temp Stuff
     
-    fileprivate func showNotification() {
+    func showNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Background Task says..."
         content.body = "FooBar! [#\(UserDefaults.standard.numberOfBGTaskCalls)]"
