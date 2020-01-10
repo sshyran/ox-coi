@@ -142,7 +142,6 @@ class _ChatCreateState extends State<ChatCreate> {
               height: dividerHeight,
               color: CustomTheme.of(context).onBackground.withOpacity(barely),
             ),
-        padding: showNewContactAndAddGroup ? null : EdgeInsets.only(top: listItemPadding),
         itemCount: state.contactIds.length + offset,
         itemBuilder: (BuildContext context, int index) {
           if (showNewContactAndAddGroup && index == 0) {
@@ -168,7 +167,7 @@ class _ChatCreateState extends State<ChatCreate> {
           ),
           title: Text(
             L10n.get(L.contactNew),
-            style: Theme.of(context).textTheme.subhead.merge(getPrimaryW500TextStyle(context)),
+            style: Theme.of(context).textTheme.subhead.merge(getAccentW500TextStyle(context)),
           ),
           onTap: newContactTapped,
         ),
@@ -186,14 +185,11 @@ class _ChatCreateState extends State<ChatCreate> {
             ),
             title: Text(
               L10n.get(L.groupCreate),
-              style: Theme.of(context).textTheme.subhead.merge(getPrimaryW500TextStyle(context)),
+              style: Theme.of(context).textTheme.subhead.merge(getAccentW500TextStyle(context)),
             ),
             onTap: createGroupTapped,
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: listItemPadding),
-        )
       ],
     );
   }
