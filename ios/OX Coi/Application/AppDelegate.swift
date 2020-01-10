@@ -42,6 +42,9 @@
 
 import Flutter
 import UIKit
+import Firebase
+
+// https://firebase.google.com/docs/cloud-messaging/ios/client#method_swizzling_in_firebase_messaging
 
 @UIApplicationMain
 @objc
@@ -52,6 +55,7 @@ class AppDelegate: FlutterAppDelegate {
     internal var startString: String?
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
         UIApplication.setupLogging()
         GeneratedPluginRegistrant.register(with: self)
 
@@ -66,6 +70,10 @@ class AppDelegate: FlutterAppDelegate {
         setupSharingMethodChannel()
 
         return true
+    }
+    
+    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
     }
 
     override func applicationDidEnterBackground(_ application: UIApplication) {

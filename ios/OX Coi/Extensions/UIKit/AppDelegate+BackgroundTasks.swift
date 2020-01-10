@@ -110,12 +110,12 @@ extension AppDelegate: FlutterStreamHandler {
     fileprivate func handle(call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
             case BGChannel.Name.Method:
-                if let arguments = call.arguments as? [String: Any],
-                    let callbackHandle = arguments[] as Int64 {
-                    
-                    result(true)
-                    return
-                }
+//                if let arguments = call.arguments as? [String: Any],
+//                    let callbackHandle = arguments[] as Int64 {
+//                    
+//                    result(true)
+//                    return
+//                }
                 result(false)
             
             default:
