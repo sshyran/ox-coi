@@ -126,7 +126,7 @@ class MessagePartForwarded extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var messageStateData = _getMessageStateData(context);
-    Color color = messageStateData.isOutgoing ? onSecondary.withOpacity(half) : onSurface.withOpacity(half);
+    Color color = messageStateData.isOutgoing ? CustomTheme.of(context).onSecondary.withOpacity(half) : CustomTheme.of(context).onSurface.withOpacity(half);
     double topPadding = messageStateData.isGroup && !messageStateData.isOutgoing ? messagesForwardTopPaddingGroup : messagesForwardTopPadding;
     return Padding(
       padding: EdgeInsets.only(top: topPadding, left: messagesHorizontalInnerPadding, right: messagesHorizontalInnerPadding,),
