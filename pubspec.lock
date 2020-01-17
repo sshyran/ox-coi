@@ -806,10 +806,12 @@ packages:
   video_thumbnail:
     dependency: "direct main"
     description:
-      name: video_thumbnail
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.6"
+      path: "."
+      ref: HEAD
+      resolved-ref: "3c27c7e0dcb8a842d1dce31986c382d1f14340ed"
+      url: "https://github.com/CihanOezkan/video_thumbnail.git"
+    source: git
+    version: "0.2.0"
   vm_service_client:
     dependency: transitive
     description:
