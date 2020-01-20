@@ -243,6 +243,7 @@ class L {
   // Response from server address X with error code Y (e.g. Response from provide.com: Login failed)
   static final loginErrorResponseXY = _translationKey("Response from %s: %s\n\nSome providers place additional information in your inbox; you can check them eg. in the web frontend. Consult your provider or friends if you run into problems.");
   static final loginSignIn = _translationKey("Sign in");
+  static final loginImapSmtpName = _translationKey("IMAP/SMTP login names");
   static final loginServerAddresses = _translationKey("Server addresses");
   static final loginManualSetupRequired = _translationKey("We could not determine all settings automatically.");
 
@@ -285,7 +286,8 @@ class L {
   static final providerSignInTextX = _translationKey("Sign in with %s");
 
   static final qrProfile = _translationKey("Profile QR");
-  static final qrScan = _translationKey("Scan QR");
+  static final qrAddContactHeader = _translationKey("Or scan QR code");
+  static final qrScan = _translationKey("Scan QR code");
   // Scan the QR code to add an verify user X (e.g. Scan this QR code to create a new contact or verify a contact with alice.)
   static final qrScanTextX = _translationKey("Scan this QR code to create a new contact or verify a contact with %s.");
   static final qrShow = _translationKey("Show QR");

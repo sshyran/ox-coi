@@ -45,26 +45,28 @@ import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/utils/image.dart';
 
-class SuperellipseIcon extends StatelessWidget {
+class AdaptiveSuperellipseIcon extends StatelessWidget {
   final IconSource icon;
-  final double size;
   final Color color;
   final Color iconColor;
+  final double size;
 
-  SuperellipseIcon({@required this.icon, @required this.size, @required this.color, @required this.iconColor});
+  AdaptiveSuperellipseIcon({@required this.icon, @required this.color, @required this.iconColor, this.size});
 
   @override
   Widget build(BuildContext context) {
+    var iconSize = size ?? IconTheme.of(context).size;
+    var backgroundSize = iconSize + superellipseIconFactor;
     return Container(
-      height: size,
-      width: size,
+      height: backgroundSize,
+      width: backgroundSize,
       decoration: ShapeDecoration(
-        shape: getSuperEllipseShape(size),
+        shape: getSuperEllipseShape(backgroundSize),
         color: color,
       ),
       child: AdaptiveIcon(
         icon: icon,
-        size: (size - superellipseIconMinimizeFactor),
+        size: iconSize,
         color: iconColor,
       ),
     );

@@ -60,7 +60,6 @@ import 'package:ox_coi/src/user/user_change_event_state.dart';
 import 'package:ox_coi/src/utils/dialog_builder.dart';
 import 'package:ox_coi/src/utils/toast.dart';
 import 'package:ox_coi/src/widgets/fullscreen_progress.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon_button.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
@@ -86,11 +85,9 @@ class _UserAccountSettingsState extends State<UserAccountSettings> {
     _navigation.current = Navigatable(Type.settingsAccount);
     _loginBloc = LoginBloc(BlocProvider.of<ErrorBloc>(context));
     _userChangeBloc.add(RequestUser());
-    final userStatesObservable = new Observable<UserChangeState>(_userChangeBloc);
-    userStatesObservable.listen((state) => _handleUserChangeStateChange(state));
+    _userChangeBloc.listen((state) => _handleUserChangeStateChange(state));
 
-    final loginObservable = new Observable<LoginState>(_loginBloc);
-    loginObservable.listen((event) => handleLoginStateChange(event));
+    _loginBloc.listen((event) => handleLoginStateChange(event));
   }
 
   _handleUserChangeStateChange(UserChangeState state) {
@@ -128,7 +125,7 @@ class _UserAccountSettingsState extends State<UserAccountSettings> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (context) {
+      create: (context) {
         var settingsManualFormBloc = SettingsManualFormBloc();
         settingsManualFormBloc.add(SetupSettings(
           shouldLoadConfig: true,
@@ -155,7 +152,7 @@ class _UserAccountSettingsState extends State<UserAccountSettings> {
                 imapPort: state.imapPort,
                 imapSecurity: state.imapSecurity,
                 smtpLogin: state.smtpLogin,
-                smtpPassword: state.password,
+                smtpPassword: state.smtpPassword,
                 smtpServer: state.smtpServer,
                 smtpPort: state.smtpPort,
                 smtpSecurity: state.smtpSecurity,
@@ -165,8 +162,8 @@ class _UserAccountSettingsState extends State<UserAccountSettings> {
         },
         child: Scaffold(
           appBar: AdaptiveAppBar(
-            leadingIcon: new AdaptiveIconButton(
-              icon: new AdaptiveIcon(
+            leadingIcon: AdaptiveIconButton(
+              icon: AdaptiveIcon(
                 icon: IconSource.close,
               ),
               onPressed: () => _navigation.pop(context),

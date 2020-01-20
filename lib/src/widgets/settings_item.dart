@@ -40,23 +40,44 @@
  * for more details.
  */
 
-package com.openxchange.oxcoi;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
+import 'package:ox_coi/src/ui/custom_theme.dart';
+import 'package:ox_coi/src/ui/dimensions.dart';
 
-import com.transistorsoft.flutter.backgroundfetch.BackgroundFetchPlugin;
+class SettingsItem extends StatelessWidget {
+  final IconSource icon;
+  final Color iconBackground;
+  final String text;
 
-import io.flutter.app.FlutterApplication;
-import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugins.GeneratedPluginRegistrant;
+  SettingsItem({@required this.icon, @required this.iconBackground, @required this.text});
 
-public class Application extends FlutterApplication implements PluginRegistry.PluginRegistrantCallback {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        BackgroundFetchPlugin.setPluginRegistrant(this);
-    }
-
-    @Override
-    public void registerWith(PluginRegistry registry) {
-        GeneratedPluginRegistrant.registerWith(registry);
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: CustomTheme.of(context).surface,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: settingsItemHorizontalPadding, vertical: settingsItemVerticalPadding),
+        child: Row(
+          children: <Widget>[
+            AdaptiveSuperellipseIcon(
+              size: superellipseIconSize,
+              color: iconBackground,
+              iconColor: CustomTheme.of(context).white,
+              icon: icon,
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: settingsItemIconTextPadding),
+            ),
+            Text(
+              text,
+              style: Theme.of(context).textTheme.body1.apply(color: CustomTheme.of(context).onSurface),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
