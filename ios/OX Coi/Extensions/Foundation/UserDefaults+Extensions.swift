@@ -26,7 +26,7 @@
  * https://www.open-xchange.com/legal/. The contributing author shall be
  * given Attribution for the derivative code and a license granting use.
  *
- * Copyright (C) 2016-2019 OX Software GmbH
+ * Copyright (C) 2016-2020 OX Software GmbH
  * Mail: info@open-xchange.com
  *
  *
@@ -42,64 +42,45 @@
 
 import Foundation
 
-fileprivate let INTENT_CHANNEL_NAME = "oxcoi.intent"
+//swiftlint:disable force_unwrapping
+extension UserDefaults {
 
-extension AppDelegate {
-
-    internal func setupSharingMethodChannel() {
-        guard let controller = window.rootViewController as? FlutterViewController else {
-            return
+    fileprivate enum Key {
+        case numberOfBGTaskCalls
+        case callbackHandle
+        
+        var stringValue: String {
+            return "\(WorkManager.identifier).\(self)"
         }
-
-        let methodChannel = FlutterMethodChannel(name: INTENT_CHANNEL_NAME, binaryMessenger: controller.binaryMessenger)
-        methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
-            switch call.method {
-            case Method.Invite.InviteLink:
-                if let startString = self.startString {
-                    if !startString.isEmpty {
-                        result(self.startString)
-                        self.startString = nil
-                        return
-                    }
-                }
-
-            case Method.Sharing.SendSharedData:
-                if let args = call.arguments as? [String: String] {
-                    self.shareFile(arguments: args)
-                }
-
-            default:
-                break
-            }
-            result(nil)
+    }
+    
+    // MARK: - Public Properties
+    
+    var numberOfBGTaskCalls: Int {
+        get {
+            return value(for: .numberOfBGTaskCalls)!
+        }
+        set {
+            store(value: newValue, for: .numberOfBGTaskCalls)
+        }
+    }
+    
+    var callbackHandle: Int64 {
+        get {
+            return value(for: .callbackHandle)!
+        }
+        set {
+            store(value: newValue, for: .callbackHandle)
         }
     }
 
-    private func shareFile(arguments: [String: String]) {
-        var itemTemp: Any?
-
-        if let path = arguments["path"] {
-            if !path.isEmpty {
-                itemTemp = URL(fileURLWithPath: path)
-            }
-        }
-
-        if let text = arguments["text"] {
-            if !text.isEmpty {
-                itemTemp = text
-            }
-        }
-
-        guard let item = itemTemp else {
-            return
-        }
-        guard let rootViewController = window.rootViewController as? FlutterViewController else {
-            return
-        }
-
-        let activityController = UIActivityViewController(activityItems: [item], applicationActivities: nil)
-        rootViewController.present(activityController, animated: true, completion: nil)
-
+    // MARK: - Private Helper
+    
+    fileprivate func store<T>(value: T, for key: Key) {
+        set(value, forKey: key.stringValue)
     }
 
+    fileprivate func value<T>(for key: Key) -> T? {
+        return value(forKey: key.stringValue) as? T
+    }
 }

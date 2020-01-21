@@ -83,11 +83,10 @@ extension AppDelegate: FlutterStreamHandler {
         }
         
         // Register Method-Channel
-        if let flutterEngine = FlutterEngine(name: BGTaskIdentifier.Refresh, project: nil, allowHeadlessExecution: true) {
-            let methodChannel = FlutterMethodChannel(name: "\(BGChannel.Path)/\(BGChannel.Name.Method)", binaryMessenger: flutterEngine.binaryMessenger)
-            methodChannel.setMethodCallHandler { call, result in
-                self.handle(call: call, result: result)
-            }
+        let flutterEngine = FlutterEngine(name: BGTaskIdentifier.Refresh, project: nil, allowHeadlessExecution: true)
+        let methodChannel = FlutterMethodChannel(name: "\(BGChannel.Path)/\(BGChannel.Name.Method)", binaryMessenger: flutterEngine.binaryMessenger)
+        methodChannel.setMethodCallHandler { call, result in
+            self.handle(call: call, result: result)
         }
         
     }
@@ -198,48 +197,4 @@ extension AppDelegate: FlutterStreamHandler {
         }
     }
     
-}
-
-// MARK: -
-
-extension UserDefaults {
-
-    fileprivate enum Key {
-        case numberOfBGTaskCalls
-        case callbackHandle
-        
-        var stringValue: String {
-            return "\(WorkManager.identifier).\(self)"
-        }
-    }
-    
-    // MARK: - Public Properties
-    
-    var numberOfBGTaskCalls: Int {
-        get {
-            return value(for: .numberOfBGTaskCalls)!
-        }
-        set {
-            store(value: newValue, for: .numberOfBGTaskCalls)
-        }
-    }
-    
-    var callbackHandle: Int64 {
-        get {
-            return value(for: .callbackHandle)!
-        }
-        set {
-            store(value: newValue, for: .callbackHandle)
-        }
-    }
-
-    // MARK: - Private Helper
-    
-    fileprivate func store<T>(value: T, for key: Key) {
-        set(value, forKey: key.stringValue)
-    }
-
-    fileprivate func value<T>(for key: Key) -> T? {
-        return value(forKey: key.stringValue) as? T
-    }
 }

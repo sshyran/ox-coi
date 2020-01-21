@@ -50,18 +50,13 @@ import Firebase
 @objc
 class AppDelegate: FlutterAppDelegate {
 
-    internal let INTENT_CHANNEL_NAME = "oxcoi.intent"
     private var sharedData: [String: String]?
     internal var startString: String?
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         UIApplication.setupLogging()
-
-        if #available(iOS 10.0, *) {
-          UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
-        }
-        
+        UNUserNotificationCenter.current().delegate = self
         GeneratedPluginRegistrant.register(with: self)
 
         setupBackgroundTasks()
