@@ -513,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -534,6 +535,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
+				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.openxchange.oxcoi.dev;
 				PRODUCT_NAME = "$(FLUTTER_BUNDLE_DISPLAY_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -604,6 +606,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
@@ -693,6 +696,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -785,6 +789,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_ID = com.openxchange.oxcoi;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -932,12 +937,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "${FLUTTER_BUILD_NUMBER}";
 				DEVELOPMENT_TEAM = 528HQ38877;
 				ENABLE_BITCODE = NO;
+				FLUTTER_BUNDLE_DISPLAY_NAME = "OX COI Messenger Dev";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -969,6 +976,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_ENTITLEMENTS = "OX Coi/Runner.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
