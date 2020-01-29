@@ -40,50 +40,31 @@
 * for more details.
 */
 
-import Flutter
-import UIKit
-import Firebase
+import UserNotifications
 
-@UIApplicationMain
-@objc
-class AppDelegate: FlutterAppDelegate {
+class NotificationService: UNNotificationServiceExtension {
 
-    private var sharedData: [String: String]?
-    var startString: String?
+    var contentHandler: ((UNNotificationContent) -> Void)?
+    var bestAttemptContent: UNMutableNotificationContent?
 
-    // MARK: - UIApplicationDelegate
+    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        self.contentHandler = contentHandler
+        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UIApplication.setupLogging()
-        UIApplication.setupFirebase()
+        if let bestAttemptContent = bestAttemptContent {
+            // Modify the notification content here...
+            bestAttemptContent.title = "\(bestAttemptContent.title) [modified]"
 
-        UNUserNotificationCenter.current().delegate = self
-        GeneratedPluginRegistrant.register(with: self)
-
-        application.setMinimumBackgroundFetchInterval(60 * 5)
-        setupSharingMethodChannel()
-
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+            contentHandler(bestAttemptContent)
+        }
     }
 
-    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        startString = url.absoluteString
-        setupSharingMethodChannel()
-        return true
-    }
-
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Messaging.messaging().apnsToken = deviceToken
-    }
-
-    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        log.error(error)
-    }
-
-    // MARK: - UNUserNotificationCenterDelegate
-
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        log.info(notification)
+    override func serviceExtensionTimeWillExpire() {
+        // Called just before the extension will be terminated by the system.
+        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
+        if let contentHandler = contentHandler, let bestAttemptContent = bestAttemptContent {
+            contentHandler(bestAttemptContent)
+        }
     }
 
 }
