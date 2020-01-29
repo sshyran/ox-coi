@@ -42,6 +42,8 @@
 
 import UserNotifications
 
+// https://medium.com/@mail2ashislaha/rich-push-notification-with-firebase-cloud-messaging-fcm-and-pusher-in-ios-platform-8b4e9922120
+
 class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -53,7 +55,8 @@ class NotificationService: UNNotificationServiceExtension {
 
         if let bestAttemptContent = bestAttemptContent {
             // Modify the notification content here...
-            bestAttemptContent.title = "\(bestAttemptContent.title) [modified]"
+            bestAttemptContent.title = "[modified] \(bestAttemptContent.title)"
+            bestAttemptContent.body = " [modified] \(bestAttemptContent.body)"
 
             contentHandler(bestAttemptContent)
         }
