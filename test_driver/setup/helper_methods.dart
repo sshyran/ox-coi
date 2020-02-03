@@ -77,11 +77,10 @@ Future addNewContact(
   await driver.tap(personAddFinder);
   await driver.tap(keyContactChangeNameFinder);
   await driver.enterText(newTestName);
-  await driver.tap(keyContactChangeEmailFinder);
+  await driver.tap(find.byValueKey(keyContactChangeEmailValidatableTextFormField));
   await driver.enterText(newTestContact);
   await driver.tap(keyContactChangeCheckFinder);
-  var actualNewContact = await driver.getText(find.text(newTestName));
-  expect(actualNewContact, newTestName);
+  expect(await driver.getText(find.text(newTestName)), newTestName);
 }
 
 Future deleteContact(
@@ -90,7 +89,7 @@ Future deleteContact(
 ) async {
   await driver.tap(find.text(newTestName));
   await driver.tap(find.byValueKey(keyContactDetailDeleteContactProfileActionIcon));
-  await driver.tap(positiveFinder);
+  await driver.tap(find.byValueKey(keyConfirmationDialogPositiveButton));
 }
 
 Future chatSearch(FlutterDriver driver, String chatName, String searchString) async {
@@ -135,7 +134,7 @@ Future writeTextInChat(FlutterDriver driver, [String text = ""]) async {
 
 Future callTest(FlutterDriver driver) async {
   await driver.tap(find.byValueKey(keyChatIconButtonIconPhone));
-  await driver.tap(keyDialogBuilderAlertDialogOkFlatButtonFinder);
+  await driver.tap(find.byValueKey(keyInformationDialogPositiveButton));
 }
 
 Future unblockOneContactFromBlockedContacts(
@@ -153,15 +152,14 @@ Future unblockOneContactFromBlockedContacts(
 Future blockOneContactFromContacts(FlutterDriver driver, String contactNameToBlock) async {
   const blockContact = 'Block contact';
   await driver.tap(find.text(contactNameToBlock));
-  await driver.tap(find.byValueKey(keyContactDetailBlockContactProfileActionIcon));
+  await driver.tap(find.byValueKey(keyUserProfileBlockIconSource));
   await driver.tap(find.text(blockContact));
 }
 
 Future unFlaggedMessage(FlutterDriver driver, String flagUnFlag, String messageToUnFlagged) async {
   SerializableFinder messageToUnFlaggedFinder = find.text(messageToUnFlagged);
-  await driver.tap(find.byValueKey(keyChatListGetFlaggedActionIconButton));
-  var actualUnflaggedMessage = await driver.getText(messageToUnFlaggedFinder);
-  expect(actualUnflaggedMessage, messageToUnFlagged);
+  await driver.tap(find.byValueKey(keyUserProfileFlagIconSource));
+  expect(await driver.getText(messageToUnFlaggedFinder), messageToUnFlagged);
   await driver.scroll(messageToUnFlaggedFinder, 0, 0, scrollDuration);
   await driver.tap(find.text(flagUnFlag));
 }

@@ -60,6 +60,7 @@ import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:ox_coi/src/utils/text.dart';
 import 'package:ox_coi/src/widgets/avatar.dart';
 import 'package:ox_coi/src/widgets/placeholder_text.dart';
+import 'package:ox_coi/src/utils/keyMapping.dart';
 
 class ProfileData extends InheritedWidget {
   final Color imageBackgroundColor;
@@ -259,7 +260,7 @@ class ProfileHeaderEditButton extends StatelessWidget {
           color: CustomTheme.of(context).onBackground.withOpacity(barely),
           icon: IconSource.edit,
           iconColor: CustomTheme.of(context).accent,
-        ),
+        ),key: Key(keyProfileHeaderAdaptiveIconButton),
         onPressed: () => ProfileData.of(context).editActionCallback(),
       ),
     );
@@ -290,7 +291,7 @@ class ProfileHeaderSecondaryText extends StatelessWidget {
       ProfileData.of(context).secondaryText,
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
-      style: getProfileHeaderSecondTextStyle(context),
+      style: getProfileHeaderSecondTextStyle(context),key: Key(keyProfileHeaderText),
     );
     return GestureDetector(
       onTap: () => copyToClipboardWithToast(text: ProfileData.of(context).secondaryText, toastText: getDefaultCopyToastText(context)),
