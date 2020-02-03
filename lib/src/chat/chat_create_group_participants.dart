@@ -77,6 +77,7 @@ class _ChatCreateGroupParticipantsState extends State<ChatCreateGroupParticipant
   ContactListBloc _contactListBloc = ContactListBloc();
   Repository<Chat> chatRepository;
   Navigation navigation = Navigation();
+  var _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -159,24 +160,33 @@ class _ChatCreateGroupParticipantsState extends State<ChatCreateGroupParticipant
   }
 
   ListView buildListItems(ContactListStateSuccess state) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-        height: dividerHeight,
-        color: CustomTheme.of(context).onBackground.withOpacity(barely),
-      ),
-      itemCount: state.contactIds.length,
-      itemBuilder: (BuildContext context, int index) {
-        var contactId = state.contactIds[index];
-        var key = createKeyString(contactId, state.contactLastUpdateValues[index]);
-        bool isSelected = state.contactsSelected.contains(contactId);
-        return ContactItemSelectable(
-          contactId: contactId,
-          onTap: _itemTapped,
-          isSelected: isSelected,
-          key: key,
-        );
-      },
-    );
+    var contactIds = state.contactIds;
+    var contactLastUpdateValues = state.contactLastUpdateValues;
+    return ListView.custom(
+        controller: _scrollController,
+        childrenDelegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+              var contactId = contactIds[index];
+              var key = createKeyFromId(contactId, [contactLastUpdateValues[index]]);
+              bool isSelected = state.contactsSelected.contains(contactId);
+              return ContactItemSelectable(
+                contactId: contactId,
+                onTap: _itemTapped,
+                isSelected: isSelected,
+                key: key,
+              );
+            },
+            childCount: contactIds.length,
+            findChildIndexCallback: (Key key) {
+              final ValueKey valueKey = key;
+              var id = extractId(valueKey);
+              if (contactIds.contains(id)) {
+                var indexOf = contactIds.indexOf(id);
+                return indexOf;
+              } else {
+                return null;
+              }
+            }));
   }
 
   Widget _buildSelectedParticipantList(List<int> selectedContacts) {

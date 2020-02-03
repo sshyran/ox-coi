@@ -51,7 +51,7 @@ class ContactItemSelectable extends StatefulWidget {
   final Function onTap;
   final bool isSelected;
 
-  ContactItemSelectable({@required this.contactId, @required this.onTap, @required this.isSelected, key}) : super(key: Key(key));
+  ContactItemSelectable({@required this.contactId, @required this.onTap, @required this.isSelected, key}) : super(key: key);
 
   @override
   _ContactItemSelectableState createState() => _ContactItemSelectableState();
