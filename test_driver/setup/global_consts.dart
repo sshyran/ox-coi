@@ -75,7 +75,7 @@ const mailCom = 'Mail.com';
 
 const helloWorld = 'Hello world';
 
-final typeSomethingComposePlaceholderFinder = find.byValueKey( L.getKey(L.typeSomething));
+final typeSomethingComposePlaceholderFinder = find.byValueKey(L.getKey(L.typeSomething));
 
 final profileFinder = find.text(L.getKey(L.profile));
 

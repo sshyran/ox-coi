@@ -61,11 +61,12 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test messages fonctionslity', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test messages fonctionslity', () {
     final flagUnFlag = L.getKey(L.messageActionFlagUnflag);
     final forward = L.getKey(L.messageActionForward);
     final textToDelete = 'Text to delete';
@@ -97,7 +98,7 @@ void main() {
       await flaggedMessage(driver, flagUnFlag, helloWorldFinder);
       await driver.tap(pageBack);
       await navigateTo(driver, L.getPluralKey(L.chatP));
-     });
+    });
 
     test(': UnFlagged messages.', () async {
       await unFlaggedMessage(driver, flagUnFlag, helloWorld);

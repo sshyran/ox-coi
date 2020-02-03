@@ -51,11 +51,12 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test profile.', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test profile.', () {
     final testUserNameUserProfile = 'EDN tester';
     final profileUserStatus = 'Sent with OX COI Messenger - https://coi.me';
     final userProfileStatusTextFinder = find.text(profileUserStatus);
@@ -63,7 +64,7 @@ void main() {
     test(': Get and edit profile.', () async {
       await driver.tap(profileFinder);
       var actualMail = await driver.getText(userProfileEmailTextFinder);
-      expect(actualMail,realEmail);
+      expect(actualMail, realEmail);
       var actualStatus = await driver.getText(userProfileStatusTextFinder);
       expect(actualStatus, profileUserStatus);
       await driver.tap(userProfileEditRaisedButtonFinder);

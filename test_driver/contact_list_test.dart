@@ -50,11 +50,12 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test create profile integration tests.', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test create profile integration tests.', () {
     test(': Get conatact.', () async {
       await driver.tap(contactsFinder);
       await driver.tap(cancelFinder);

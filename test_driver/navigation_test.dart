@@ -51,11 +51,12 @@ import 'setup/global_consts.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test navigation tests.', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test navigation tests.', () {
     test(': Test chat navigation.', () async {
       await driver.tap(profileFinder);
       await driver.tap(contactsFinder);

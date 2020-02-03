@@ -52,9 +52,10 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  final setup = Setup();
-  setup.perform();
-  final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
   const testNameGroup = "TestGroup";
   const newNameTestGroup = "NewNameTestGroup";

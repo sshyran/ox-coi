@@ -60,11 +60,12 @@ import 'setup/global_consts.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test account settings', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test account settings', () {
     const fakeIMAPCoiServer = 'mobile-coi.open-xchange.comm';
     const fakeSMTPCoiServer = 'mobile-coi.open-xchange.comm';
     const realServer = 'mobile-coi.open-xchange.com';

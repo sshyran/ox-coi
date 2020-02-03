@@ -52,10 +52,10 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  // Setup for the test.
-  final setup = Setup();
-  setup.perform(true);
-  final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver(isLogin: true);
+  });
 
   //  Const for the Ox coi welcome and provider page.
   const outlook = 'Outlook';
@@ -79,7 +79,7 @@ void main() {
 
   group('Choose provider before starting the whole login check', () {
     test(': Scroll and select the coiDebug provider.', () async {
-      await driver.scroll(find.text(mailCom), 0, -600, Duration(milliseconds: 500));
+      await driver.scroll(find.text(mailCom), 0.0, -600.0, Duration(milliseconds: 500));
       await selectAndTapProvider(driver);
     });
   });
@@ -148,8 +148,8 @@ void main() {
   group('Performing the login with real authentication informations', () {
     test(': Login test: Sign in with realEmail and realPassword.', () async {
       await logIn(driver, realEmail, realPassword);
-      var actualChatListTitle = await driver.getText(find.text(L.getKey(L.chatListPlaceholder)));
-      expect(actualChatListTitle, L.getKey(L.chatListPlaceholder));
+      var actualChatListTitle = await driver.getText(find.text(L.getPluralKey(L.chatP)));
+      expect(actualChatListTitle, L.getPluralKey(L.chatP));
     });
   });
 }
@@ -182,16 +182,13 @@ Future checkOxCoiWelcomeAndProviderList(
   expect(actualProviderMailbox, mailbox);
 }
 
-Future selectAndTapProvider(
-  FlutterDriver driver,
-) async {
+Future selectAndTapProvider(FlutterDriver driver) async {
   final loginProviderSignInText = 'Sign in with Debug (mobile-qa)';
   final coiDebugFinder = find.text(coiDebug);
   final emailFieldFinder = find.byValueKey(keyProviderSignInEmailTextField);
   final passwordFieldFinder = find.byValueKey(keyProviderSignInPasswordTextField);
   var actualProviderDebug = await driver.getText(coiDebugFinder);
   var actualLoginButton = await driver.getText(find.text(L.getKey(L.loginSignIn).toUpperCase()));
-
 
   expect(actualProviderDebug, coiDebug);
   await driver.tap(coiDebugFinder);

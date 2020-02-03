@@ -61,11 +61,12 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test: Add swipe to delete for contacts test', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test: Add swipe to delete for contacts test', () {
     final newTestName1Finder = find.text(newTestName01);
 
     test(': Get contacts', () async {

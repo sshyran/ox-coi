@@ -62,11 +62,12 @@ import 'setup/helper_methods.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Test block / unblock functionality', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Test block / unblock functionality', () {
     final block = L.getKey(L.block);
     final unblock = L.getKey(L.unblock);
 

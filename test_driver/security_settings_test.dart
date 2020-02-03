@@ -60,11 +60,12 @@ import 'setup/global_consts.dart';
 import 'setup/main_test_setup.dart';
 
 void main() {
-  group('Security test.', () {
-    final setup = Setup();
-    setup.perform();
-    final driver = setup.driver;
+  FlutterDriver driver;
+  setUpAll(() async {
+    driver = await setupAndGetDriver();
+  });
 
+  group('Security test.', () {
     final security = L.getKey(L.security);
     final expertImportKeys = L.getKey(L.settingImportKeys);
     final expertExportKeys = L.getKey(L.settingExportKeys);
