@@ -55,6 +55,7 @@ import 'package:ox_coi/src/navigation/navigatable.dart';
 import 'package:ox_coi/src/navigation/navigation.dart';
 import 'package:ox_coi/src/ui/color.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
+import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:ox_coi/src/widgets/list_group_header.dart';
 import 'package:ox_coi/src/widgets/profile_body.dart';
 import 'package:ox_coi/src/widgets/profile_header.dart';
@@ -241,7 +242,7 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
       MaterialPageRoute<EditGroupProfile>(
         builder: (context) {
           return BlocProvider.value(
-            value: _chatBloc,
+            value: _chatBloc,key: Key(keyChatProfileGroupEditIcon),
             child: EditGroupProfile(
               chatId: widget.chatId,
             ),

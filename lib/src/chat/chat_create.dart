@@ -63,6 +63,7 @@ import 'package:ox_coi/src/utils/key_generator.dart';
 import 'package:ox_coi/src/widgets/search.dart';
 import 'package:ox_coi/src/widgets/state_info.dart';
 
+
 class ChatCreate extends StatefulWidget {
   @override
   _ChatCreateState createState() => _ChatCreateState();
@@ -91,7 +92,7 @@ class _ChatCreateState extends State<ChatCreate> {
         appBar: AdaptiveAppBar(
           title: Text(L10n.get(L.chatCreate)),
           actions: <Widget>[getSearchAction()],
-        ),
+        ),key: Key(keyChatCreateAdaptiveAppBar),
         body: buildList(true));
   }
 
