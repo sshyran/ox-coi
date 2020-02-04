@@ -54,6 +54,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   StreamSubscription<RecordStatus> _recorderSubscription;
+  StreamSubscription<double> _recorderDBPeakSubscription;
   FlutterSound _flutterSound = FlutterSound();
   String _audioPath;
 
@@ -68,7 +69,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
         bool hasFilesPermission = await hasPermission(PermissionGroup.storage);
         if (hasContactPermission && hasFilesPermission) {
           await startAudioRecorder();
-          yield ChatComposerRecordingAudio(timer: "00:00:00");
+          yield ChatComposerRecordingAudio(timer: "00:00");
         } else {
           yield ChatComposerRecordingAborted(error: ChatComposerStateError.missingMicrophonePermission);
         }
@@ -98,8 +99,10 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
 
   Future<void> startAudioRecorder() async {
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
+    _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
+      add(UpdateAudioDBPeak(dbPeak: newDBPeak));
+    });
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
-      print("coezkan: ${e.currentPosition}");
       String timer = getTimerFromTimestamp(e.currentPosition.toInt());
       add(UpdateAudioRecording(timer: timer));
     });
@@ -112,6 +115,9 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
 
       if (_recorderSubscription != null) {
         _recorderSubscription.cancel();
+      }
+      if(_recorderDBPeakSubscription != null){
+        _recorderDBPeakSubscription.cancel();
       }
     } catch (err) {
       print('stopRecorder error: $err');

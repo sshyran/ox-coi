@@ -52,6 +52,12 @@ class UpdateAudioRecording extends ChatComposerEvent {
   UpdateAudioRecording({@required this.timer});
 }
 
+class UpdateAudioDBPeak extends ChatComposerEvent {
+  final double dbPeak;
+
+  UpdateAudioDBPeak({@required this.dbPeak});
+}
+
 class StopAudioRecording extends ChatComposerEvent {
   final bool shouldSend;
 

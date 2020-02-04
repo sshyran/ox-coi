@@ -110,6 +110,8 @@ enum IconSource {
   signature,
   serverSetting,
   feedback,
+  openLock,
+  stopPlay,
 }
 
 class AdaptiveIcon extends AdaptiveWidget<Icon, Icon> {
@@ -200,6 +202,8 @@ class AdaptiveIcon extends AdaptiveWidget<Icon, Icon> {
     IconSource.signature : [Icons.gesture, Icons.gesture],
     IconSource.serverSetting : [Icons.router, Icons.router],
     IconSource.feedback : [Icons.feedback, Icons.feedback],
+    IconSource.openLock : [Icons.lock_open, Icons.lock_open],
+    IconSource.stopPlay : [Icons.stop, Icons.stop],
   };
 
   AdaptiveIcon({

@@ -151,15 +151,6 @@ mixin ChatComposer {
       case ComposerModeType.compose:
         widgets.add(AdaptiveIconButton(
           icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.mic,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
-          ),
-          onPressed: onRecordAudioPressed,
-          key: Key(KeyChatComposerMixinOnRecordAudioPressedIcon),
-        ));
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
             icon: IconSource.camera,
             color: CustomTheme.of(context).onSurface.withOpacity(barely),
             iconColor: CustomTheme.of(context).accent,
@@ -173,6 +164,15 @@ mixin ChatComposer {
             iconColor: CustomTheme.of(context).accent,
           ),
           onPressed: onRecordVideoPressed,
+        ));
+        widgets.add(AdaptiveIconButton(
+          icon: AdaptiveSuperellipseIcon(
+            icon: IconSource.mic,
+            color: CustomTheme.of(context).onSurface.withOpacity(barely),
+            iconColor: CustomTheme.of(context).accent,
+          ),
+          onPressed: onRecordAudioPressed,
+          key: Key(KeyChatComposerMixinOnRecordAudioPressedIcon),
         ));
         break;
       case ComposerModeType.isComposing:
@@ -189,7 +189,16 @@ mixin ChatComposer {
       case ComposerModeType.isVoiceRecording:
         widgets.add(AdaptiveIconButton(
           icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.send,
+            icon: IconSource.openLock,
+            color: CustomTheme.of(context).onSurface.withOpacity(barely),
+            iconColor: CustomTheme.of(context).accent,
+          ),
+          onPressed: onRecordAudioPressed,
+          key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+        ));
+        widgets.add(AdaptiveIconButton(
+          icon: AdaptiveSuperellipseIcon(
+            icon: IconSource.stopPlay,
             color: CustomTheme.of(context).onSurface.withOpacity(barely),
             iconColor: CustomTheme.of(context).accent,
           ),
