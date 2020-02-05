@@ -216,18 +216,19 @@ class ProfileAvatar extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Avatar(
-            imagePath: ProfileData.of(context).avatarPath,
-            color: ProfileData.of(context).imageBackgroundColor,
-            size: profileAvatarSize,
-            textPrimary: ProfileData.of(context).initialsText,
-          ),
+
           Visibility(
             visible: ProfileData.of(context).imageActionCallback != null && (ProfileData.of(context).avatarPath == null || ProfileData.of(context).avatarPath.isEmpty),
             child: AdaptiveIcon(
               icon: IconSource.camera,
               color: ProfileData.of(context).showWhiteImageIcon ? CustomTheme.of(context).white : CustomTheme.of(context).accent,
             ),
+          ),
+          Avatar(
+            imagePath: ProfileData.of(context).avatarPath,
+            color: ProfileData.of(context).imageBackgroundColor,
+            size: profileAvatarSize,
+            textPrimary: ProfileData.of(context).initialsText,
           ),
         ],
       ),
