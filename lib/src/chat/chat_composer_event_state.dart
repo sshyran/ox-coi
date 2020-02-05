@@ -53,9 +53,9 @@ class UpdateAudioRecording extends ChatComposerEvent {
 }
 
 class UpdateAudioDBPeak extends ChatComposerEvent {
-  final double dbPeak;
+  final List<double> dbPeakList;
 
-  UpdateAudioDBPeak({@required this.dbPeak});
+  UpdateAudioDBPeak({@required this.dbPeakList});
 }
 
 class StopAudioRecording extends ChatComposerEvent {
@@ -97,6 +97,12 @@ class ChatComposerRecordingAudio extends ChatComposerState {
   String timer;
 
   ChatComposerRecordingAudio({@required this.timer});
+}
+
+class ChatComposerDBPeakUpdated extends ChatComposerState {
+  List<double> dbPeakList;
+
+  ChatComposerDBPeakUpdated({@required this.dbPeakList});
 }
 
 class ChatComposerRecordingAudioStopped extends ChatComposerState {

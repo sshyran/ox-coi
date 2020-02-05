@@ -41,90 +41,23 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:ox_coi/src/ui/custom_theme.dart';
+import 'package:ox_coi/src/widgets/custom_painters.dart';
 
-class CurvePainter extends CustomPainter {
-  final color;
+class VoicePainter extends StatefulWidget {
+  final List<double> dbPeakList;
 
-  CurvePainter({@required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = color;
-    paint.style = PaintingStyle.fill;
-
-    var path = Path();
-    path.lineTo(0, size.height * 0.9);
-    path.cubicTo(size.width * 0.33, size.height * -1, size.width * 0.66, size.height * 2.5, size.width, 0);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
+  VoicePainter({@required this.dbPeakList});
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
+  _VoicePainterState createState() => _VoicePainterState();
 }
 
-class BarPainter extends CustomPainter {
-  final List<double> peakLevel;
-
-  BarPainter({@required this.peakLevel});
-
-  double barWidth = 3.0;
-  double spaceWidth = 1.0;
-
+class _VoicePainterState extends State<VoicePainter> {
   @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = Colors.white;
-    paint.style = PaintingStyle.fill;
-    paint.strokeWidth = 2.0;
-
-    var x = 0.0;
-    var y = 0.0;
-    var height = 20.0;
-
-    peakLevel?.forEach((peak) {
-      y = peak > height ? y : peak;
-      canvas.drawLine(Offset(x, 0.0), Offset(x, -y), paint);
-      canvas.drawLine(Offset(x, 0.0), Offset(x, y), paint);
-      x = (x + barWidth + spaceWidth);
-    });
-    if (x > (size.width - 10)) {
-      if(barWidth >= 1.0){
-        barWidth = (barWidth - 0.5);
-      }
-      spaceWidth = (spaceWidth / 10);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class HorizontalLinePainter extends CustomPainter {
-  Paint _paint;
-
-  HorizontalLinePainter() {
-    _paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset(0.0, 0.0), Offset(size.width, 0.0), _paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(double.infinity, 0.0),
+      painter: BarPainter(peakLevel: widget.dbPeakList),
+    );
   }
 }

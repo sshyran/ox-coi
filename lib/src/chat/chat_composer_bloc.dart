@@ -79,6 +79,8 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       }
     } else if (event is UpdateAudioRecording) {
       yield ChatComposerRecordingAudio(timer: event.timer);
+    } else if (event is UpdateAudioDBPeak) {
+      yield ChatComposerDBPeakUpdated(dbPeakList: event.dbPeakList);
     } else if (event is StopAudioRecording) {
       stopAudioRecorder(event.shouldSend);
     } else if (event is AudioRecordingStopped) {
@@ -98,9 +100,11 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   }
 
   Future<void> startAudioRecorder() async {
+    var dbPeakList = List<double>();
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
-      add(UpdateAudioDBPeak(dbPeak: newDBPeak));
+      dbPeakList.add((newDBPeak/4));
+      add(UpdateAudioDBPeak(dbPeakList: dbPeakList));
     });
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
       String timer = getTimerFromTimestamp(e.currentPosition.toInt());
@@ -122,7 +126,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     } catch (err) {
       print('stopRecorder error: $err');
     }
-    add(AudioRecordingStopped(audioPath: _audioPath, shouldSend: shouldSend));
+    add(AudioRecordingStopped(audioPath: _audioPath, shouldSend: false));
   }
 
   Future<void> startImageOrVideoRecorder(bool pickImage) async {

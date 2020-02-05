@@ -117,6 +117,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
   final TextEditingController _textController = new TextEditingController();
   bool _isComposingText = false;
   String _composingAudioTimer;
+  List<double> _dbPeakList;
   String _filePath = "";
   int _knownType;
   FileType _selectedFileType;
@@ -202,6 +203,10 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       setState(() {
         _composingAudioTimer = state.timer;
       });
+    } else if (state is ChatComposerDBPeakUpdated) {
+      setState(() {
+        _dbPeakList = state.dbPeakList;
+      });
     } else if (state is ChatComposerRecordingAudioStopped) {
       if (state.filePath != null && state.shouldSend) {
         _filePath = state.filePath;
@@ -210,6 +215,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       }
       setState(() {
         _composingAudioTimer = null;
+        _dbPeakList = null;
       });
     } else if (state is ChatComposerRecordingImageOrVideoStopped) {
       if (state.type != 0 && state.filePath != null) {
@@ -219,6 +225,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       }
     } else if (state is ChatComposerRecordingAborted) {
       _composingAudioTimer = null;
+      _dbPeakList = null;
       String chatComposeAborted;
       if (state.error == ChatComposerStateError.missingMicrophonePermission) {
         chatComposeAborted = L10n.get(L.chatAudioRecordingFailed);
@@ -503,6 +510,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       textController: _textController,
       onTextChanged: _onInputTextChanged,
       text: _composingAudioTimer,
+      dbPeakList: _dbPeakList,
     ));
     widgets.addAll(buildRightComposerPart(
       context: context,
@@ -516,8 +524,11 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       data: IconThemeData(color: CustomTheme.of(context).accent),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: composerHorizontalPadding),
-        child: Row(
-          children: widgets,
+        child: BlocProvider.value(
+          value: _chatComposerBloc,
+          child: Row(
+            children: widgets,
+          ),
         ),
       ),
     );

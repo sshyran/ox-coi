@@ -45,13 +45,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon_button.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
 import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/ui/color.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
-import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
+import 'package:ox_coi/src/widgets/custom_painters.dart';
+import 'package:ox_coi/src/widgets/voice_painter.dart';
 
 enum ComposerModeType {
   compose,
@@ -105,8 +107,21 @@ mixin ChatComposer {
       @required ComposerModeType type,
       @required TextEditingController textController,
       @required Function onTextChanged,
-      @required String text}) {
-    return Flexible(child: ComposerModeType.isVoiceRecording == type ? getText(text) : getInputTextField(textController, onTextChanged, context));
+      @required String text,
+      List<double> dbPeakList}) {
+    return Flexible(
+      child: ComposerModeType.isVoiceRecording == type ? Stack(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            child: CustomPaint(
+              painter: HorizontalLinePainter(),
+            ),
+          ),
+          VoicePainter(dbPeakList: dbPeakList,),
+        ],
+      ) : getInputTextField(textController, onTextChanged, context),
+    );
   }
 
   Widget getInputTextField(TextEditingController textController, Function onTextChanged, BuildContext context) {
