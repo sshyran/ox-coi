@@ -107,20 +107,9 @@ mixin ChatComposer {
       @required ComposerModeType type,
       @required TextEditingController textController,
       @required Function onTextChanged,
-      @required String text,
       List<double> dbPeakList}) {
     return Flexible(
-      child: ComposerModeType.isVoiceRecording == type ? Stack(
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            child: CustomPaint(
-              painter: HorizontalLinePainter(),
-            ),
-          ),
-          VoicePainter(dbPeakList: dbPeakList,),
-        ],
-      ) : getInputTextField(textController, onTextChanged, context),
+      child: ComposerModeType.isVoiceRecording == type ? VoicePainter(dbPeakList: dbPeakList,) : getInputTextField(textController, onTextChanged, context),
     );
   }
 
@@ -150,7 +139,6 @@ mixin ChatComposer {
   Widget getText(String text) {
     return Container(
       child: Text(text),
-      width: double.infinity,
     );
   }
 
@@ -160,7 +148,8 @@ mixin ChatComposer {
       @required Function onRecordAudioPressed,
       @required Function onRecordVideoPressed,
       @required Function onCaptureImagePressed,
-      @required BuildContext context}) {
+      @required BuildContext context,
+      @required String text,}) {
     List<Widget> widgets = List();
     switch (type) {
       case ComposerModeType.compose:
@@ -202,6 +191,22 @@ mixin ChatComposer {
         ));
         break;
       case ComposerModeType.isVoiceRecording:
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Icon(
+              Icons.fiber_manual_record,
+              size: 12,
+              color: Colors.red,
+            ),
+          )
+        );
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: getText(text),
+          )
+        );
         widgets.add(AdaptiveIconButton(
           icon: AdaptiveSuperellipseIcon(
             icon: IconSource.openLock,

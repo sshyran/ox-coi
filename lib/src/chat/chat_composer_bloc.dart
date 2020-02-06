@@ -57,6 +57,8 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   StreamSubscription<double> _recorderDBPeakSubscription;
   FlutterSound _flutterSound = FlutterSound();
   String _audioPath;
+  bool _removeFirstEntry = false;
+  int _cutoffValue = 1;
 
   @override
   ChatComposerState get initialState => ChatComposerInitial();
@@ -81,6 +83,11 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       yield ChatComposerRecordingAudio(timer: event.timer);
     } else if (event is UpdateAudioDBPeak) {
       yield ChatComposerDBPeakUpdated(dbPeakList: event.dbPeakList);
+    } else if(event is RemoveFirstAudioDBPeak){
+      if(_removeFirstEntry != event.removeFirstEntry){
+        _removeFirstEntry = event.removeFirstEntry;
+      }
+      _cutoffValue = event.cutoffValue;
     } else if (event is StopAudioRecording) {
       stopAudioRecorder(event.shouldSend);
     } else if (event is AudioRecordingStopped) {
@@ -102,8 +109,12 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   Future<void> startAudioRecorder() async {
     var dbPeakList = List<double>();
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
+    _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
       dbPeakList.add((newDBPeak/4));
+      if(_removeFirstEntry){
+        dbPeakList.removeRange(0, _cutoffValue);
+      }
       add(UpdateAudioDBPeak(dbPeakList: dbPeakList));
     });
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {

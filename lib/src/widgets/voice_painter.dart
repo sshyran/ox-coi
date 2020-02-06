@@ -41,6 +41,9 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ox_coi/src/chat/chat_composer_bloc.dart';
+import 'package:ox_coi/src/chat/chat_composer_event_state.dart';
 import 'package:ox_coi/src/widgets/custom_painters.dart';
 
 class VoicePainter extends StatefulWidget {
@@ -53,11 +56,26 @@ class VoicePainter extends StatefulWidget {
 }
 
 class _VoicePainterState extends State<VoicePainter> {
+
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(double.infinity, 0.0),
-      painter: BarPainter(peakLevel: widget.dbPeakList),
+    return LayoutBuilder(
+      builder: (context, constraints){
+        return CustomPaint(
+          child: Container(
+            width: constraints.maxWidth,
+            child: CustomPaint(
+              painter: HorizontalLinePainter(),
+            ),
+          ),
+          size: Size(constraints.maxWidth, 0.0),
+          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback),
+        );
+      }
     );
+  }
+
+  callback(bool removeFirstEntry, int cutoffValue){
+    BlocProvider.of<ChatComposerBloc>(context)?.add(RemoveFirstAudioDBPeak(removeFirstEntry: removeFirstEntry, cutoffValue: cutoffValue));
   }
 }

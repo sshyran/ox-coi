@@ -40,6 +40,7 @@
  * for more details.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
@@ -71,11 +72,11 @@ class CurvePainter extends CustomPainter {
 
 class BarPainter extends CustomPainter {
   final List<double> peakLevel;
-
-  BarPainter({@required this.peakLevel});
-
+  final Function callback;
   double barWidth = 3.0;
   double spaceWidth = 1.0;
+
+  BarPainter({@required this.peakLevel, @required this.callback});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -90,20 +91,23 @@ class BarPainter extends CustomPainter {
 
     peakLevel?.forEach((peak) {
       y = peak > height ? y : peak;
-      canvas.drawLine(Offset(x, 0.0), Offset(x, -y), paint);
-      canvas.drawLine(Offset(x, 0.0), Offset(x, y), paint);
+      canvas.drawLine(Offset(x, y), Offset(x, -y), paint);
       x = (x + barWidth + spaceWidth);
     });
-    if (x > (size.width - 10)) {
-      if(barWidth >= 1.0){
-        barWidth = (barWidth - 0.5);
-      }
-      spaceWidth = (spaceWidth / 10);
+
+    if (x >= size.width) {
+      var cutoff = x - size.width;
+
+      int cutoffIndex = (cutoff / (barWidth + spaceWidth)).round();
+
+      callback(true, cutoffIndex);
+    }else{
+      callback(false, 1);
     }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
+  bool shouldRepaint(BarPainter oldDelegate) {
     return true;
   }
 }

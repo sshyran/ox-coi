@@ -509,7 +509,6 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       type: _getComposerType(),
       textController: _textController,
       onTextChanged: _onInputTextChanged,
-      text: _composingAudioTimer,
       dbPeakList: _dbPeakList,
     ));
     widgets.addAll(buildRightComposerPart(
@@ -519,6 +518,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       onCaptureImagePressed: _onCaptureImagePressed,
       type: _getComposerType(),
       onSendText: _onPrepareMessageSend,
+      text: _composingAudioTimer,
     ));
     return IconTheme(
       data: IconThemeData(color: CustomTheme.of(context).accent),

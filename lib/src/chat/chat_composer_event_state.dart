@@ -58,6 +58,13 @@ class UpdateAudioDBPeak extends ChatComposerEvent {
   UpdateAudioDBPeak({@required this.dbPeakList});
 }
 
+class RemoveFirstAudioDBPeak extends ChatComposerEvent {
+  final bool removeFirstEntry;
+  final int cutoffValue;
+
+  RemoveFirstAudioDBPeak({@required this.removeFirstEntry, @required this.cutoffValue});
+}
+
 class StopAudioRecording extends ChatComposerEvent {
   final bool shouldSend;
 
