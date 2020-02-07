@@ -52,7 +52,6 @@ import 'package:ox_coi/src/chatlist/chat_list_bloc.dart';
 import 'package:ox_coi/src/chatlist/chat_list_event_state.dart';
 import 'package:ox_coi/src/chatlist/chat_list_item.dart';
 import 'package:ox_coi/src/chatlist/invite_item.dart';
-import 'package:ox_coi/src/flagged/flagged.dart';
 import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/lifecycle/lifecycle_bloc.dart';
@@ -249,10 +248,10 @@ class _ChatListState extends State<ChatList> {
             findChildIndexCallback: (Key key) {
               final ValueKey valueKey = key;
               var id = extractId(valueKey);
-              if(state.chatListItemWrapper.ids.contains(id)) {
+              if (state.chatListItemWrapper.ids.contains(id)) {
                 var indexOf = state.chatListItemWrapper.ids.indexOf(id);
                 return indexOf;
-              }else{
+              } else {
                 return null;
               }
             }));

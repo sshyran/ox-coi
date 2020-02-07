@@ -65,18 +65,9 @@ class RemoveFirstAudioDBPeak extends ChatComposerEvent {
   RemoveFirstAudioDBPeak({@required this.removeFirstEntry, @required this.cutoffValue});
 }
 
-class StopAudioRecording extends ChatComposerEvent {
-  final bool shouldSend;
+class StopAudioRecording extends ChatComposerEvent {}
 
-  StopAudioRecording({@required this.shouldSend});
-}
-
-class AudioRecordingStopped extends ChatComposerEvent {
-  final String audioPath;
-  final bool shouldSend;
-
-  AudioRecordingStopped({@required this.audioPath, @required this.shouldSend});
-}
+class AbortAudioRecording extends ChatComposerEvent{}
 
 class StartImageOrVideoRecording extends ChatComposerEvent {
   final bool pickImage;
@@ -114,15 +105,16 @@ class ChatComposerDBPeakUpdated extends ChatComposerState {
 
 class ChatComposerRecordingAudioStopped extends ChatComposerState {
   String filePath;
-  bool shouldSend;
 
-  ChatComposerRecordingAudioStopped({@required this.filePath, @required this.shouldSend});
+  ChatComposerRecordingAudioStopped({@required this.filePath});
 }
 
-class ChatComposerRecordingAborted extends ChatComposerState {
+class ChatComposerRecordingAudioAborted extends ChatComposerState {}
+
+class ChatComposerRecordingFailed extends ChatComposerState {
   ChatComposerStateError error;
 
-  ChatComposerRecordingAborted({@required this.error});
+  ChatComposerRecordingFailed({@required this.error});
 }
 
 class ChatComposerRecordingImageOrVideoStopped extends ChatComposerState {

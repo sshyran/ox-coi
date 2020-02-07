@@ -73,21 +73,22 @@ class CurvePainter extends CustomPainter {
 class BarPainter extends CustomPainter {
   final List<double> peakLevel;
   final Function callback;
+  final Color color;
   double barWidth = 3.0;
   double spaceWidth = 1.0;
 
-  BarPainter({@required this.peakLevel, @required this.callback});
+  BarPainter({@required this.peakLevel, @required this.callback, @required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
-    paint.color = Colors.white;
+    paint.color = color;
     paint.style = PaintingStyle.fill;
     paint.strokeWidth = 2.0;
 
     var x = 0.0;
     var y = 0.0;
-    var height = 20.0;
+    var height = 30.0;
 
     peakLevel?.forEach((peak) {
       y = peak > height ? y : peak;
@@ -101,7 +102,7 @@ class BarPainter extends CustomPainter {
       int cutoffIndex = (cutoff / (barWidth + spaceWidth)).round();
 
       callback(true, cutoffIndex);
-    }else{
+    } else {
       callback(false, 1);
     }
   }
@@ -115,9 +116,9 @@ class BarPainter extends CustomPainter {
 class HorizontalLinePainter extends CustomPainter {
   Paint _paint;
 
-  HorizontalLinePainter() {
+  HorizontalLinePainter({@required color}) {
     _paint = Paint()
-      ..color = Colors.white
+      ..color = color
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
   }

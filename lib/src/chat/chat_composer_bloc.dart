@@ -73,31 +73,31 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
           await startAudioRecorder();
           yield ChatComposerRecordingAudio(timer: "00:00");
         } else {
-          yield ChatComposerRecordingAborted(error: ChatComposerStateError.missingMicrophonePermission);
+          yield ChatComposerRecordingFailed(error: ChatComposerStateError.missingMicrophonePermission);
         }
       } catch (err) {
         print('startRecorder error: $err');
-        yield ChatComposerRecordingAudioStopped(filePath: null, shouldSend: false);
+        yield ChatComposerRecordingAudioStopped(filePath: null);
       }
     } else if (event is UpdateAudioRecording) {
       yield ChatComposerRecordingAudio(timer: event.timer);
     } else if (event is UpdateAudioDBPeak) {
       yield ChatComposerDBPeakUpdated(dbPeakList: event.dbPeakList);
-    } else if(event is RemoveFirstAudioDBPeak){
-      if(_removeFirstEntry != event.removeFirstEntry){
+    } else if (event is RemoveFirstAudioDBPeak) {
+      if (_removeFirstEntry != event.removeFirstEntry) {
         _removeFirstEntry = event.removeFirstEntry;
       }
       _cutoffValue = event.cutoffValue;
     } else if (event is StopAudioRecording) {
-      stopAudioRecorder(event.shouldSend);
-    } else if (event is AudioRecordingStopped) {
-      yield ChatComposerRecordingAudioStopped(filePath: _audioPath, shouldSend: event.shouldSend);
+      yield* stopAudioRecorder();
+    } else if (event is AbortAudioRecording) {
+      yield* stopAudioRecorder(isAborted: true);
     } else if (event is StartImageOrVideoRecording) {
       bool hasCameraPermission = await hasPermission(PermissionGroup.camera);
       if (hasCameraPermission) {
         startImageOrVideoRecorder(event.pickImage);
       } else {
-        yield ChatComposerRecordingAborted(error: ChatComposerStateError.missingCameraPermission);
+        yield ChatComposerRecordingFailed(error: ChatComposerStateError.missingCameraPermission);
       }
     } else if (event is StopImageOrVideoRecording) {
       if (!_wasImageOrVideoRecordingCanceled(event.filePath, event.type)) {
@@ -111,8 +111,8 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
     _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
-      dbPeakList.add((newDBPeak/4));
-      if(_removeFirstEntry){
+      dbPeakList.add((newDBPeak / 4));
+      if (_removeFirstEntry) {
         dbPeakList.removeRange(0, _cutoffValue);
       }
       add(UpdateAudioDBPeak(dbPeakList: dbPeakList));
@@ -123,7 +123,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     });
   }
 
-  void stopAudioRecorder(bool shouldSend) async {
+  Stream<ChatComposerState> stopAudioRecorder({bool isAborted = false}) async* {
     try {
       String result = await _flutterSound.stopRecorder();
       print('stopRecorder: $result');
@@ -131,13 +131,18 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       if (_recorderSubscription != null) {
         _recorderSubscription.cancel();
       }
-      if(_recorderDBPeakSubscription != null){
+      if (_recorderDBPeakSubscription != null) {
         _recorderDBPeakSubscription.cancel();
       }
     } catch (err) {
       print('stopRecorder error: $err');
     }
-    add(AudioRecordingStopped(audioPath: _audioPath, shouldSend: false));
+
+    if (isAborted) {
+      yield ChatComposerRecordingAudioAborted();
+    } else {
+      yield ChatComposerRecordingAudioStopped(filePath: _audioPath);
+    }
   }
 
   Future<void> startImageOrVideoRecorder(bool pickImage) async {

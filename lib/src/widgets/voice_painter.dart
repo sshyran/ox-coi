@@ -44,6 +44,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ox_coi/src/chat/chat_composer_bloc.dart';
 import 'package:ox_coi/src/chat/chat_composer_event_state.dart';
+import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/widgets/custom_painters.dart';
 
 class VoicePainter extends StatefulWidget {
@@ -65,11 +66,11 @@ class _VoicePainterState extends State<VoicePainter> {
           child: Container(
             width: constraints.maxWidth,
             child: CustomPaint(
-              painter: HorizontalLinePainter(),
+              painter: HorizontalLinePainter(color: CustomTheme.of(context).onSurface),
             ),
           ),
           size: Size(constraints.maxWidth, 0.0),
-          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback),
+          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback, color: CustomTheme.of(context).onSurface),
         );
       }
     );

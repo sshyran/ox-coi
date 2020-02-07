@@ -52,7 +52,6 @@ import 'package:ox_coi/src/ui/color.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
-import 'package:ox_coi/src/widgets/custom_painters.dart';
 import 'package:ox_coi/src/widgets/voice_painter.dart';
 
 enum ComposerModeType {
@@ -67,6 +66,7 @@ mixin ChatComposer {
     @required Function onShowAttachmentChooser,
     @required Function onAudioRecordingAbort,
     @required BuildContext context,
+    @required bool isLockedOrStopped,
   }) {
     AdaptiveSuperellipseIcon icon;
     Function onPressed;
@@ -91,7 +91,7 @@ mixin ChatComposer {
         icon = AdaptiveSuperellipseIcon(
           icon: IconSource.delete,
           color: CustomTheme.of(context).onSurface.withOpacity(barely),
-          iconColor: CustomTheme.of(context).accent,
+          iconColor: CustomTheme.of(context).error,
         );
         onPressed = onAudioRecordingAbort;
         break;
@@ -109,7 +109,11 @@ mixin ChatComposer {
       @required Function onTextChanged,
       List<double> dbPeakList}) {
     return Flexible(
-      child: ComposerModeType.isVoiceRecording == type ? VoicePainter(dbPeakList: dbPeakList,) : getInputTextField(textController, onTextChanged, context),
+      child: ComposerModeType.isVoiceRecording == type
+          ? VoicePainter(
+              dbPeakList: dbPeakList,
+            )
+          : getInputTextField(textController, onTextChanged, context),
     );
   }
 
@@ -142,14 +146,18 @@ mixin ChatComposer {
     );
   }
 
-  List<Widget> buildRightComposerPart(
-      {@required ComposerModeType type,
-      @required Function onSendText,
-      @required Function onRecordAudioPressed,
-      @required Function onRecordVideoPressed,
-      @required Function onCaptureImagePressed,
-      @required BuildContext context,
-      @required String text,}) {
+  List<Widget> buildRightComposerPart({
+    @required ComposerModeType type,
+    @required Function onSendText,
+    @required Function onRecordAudioPressed,
+    @required Function onRecordAudioStopped,
+    @required Function onRecordVideoPressed,
+    @required Function onCaptureImagePressed,
+    @required BuildContext context,
+    @required String text,
+    @required bool isLocked,
+    @required bool isStopped,
+  }) {
     List<Widget> widgets = List();
     switch (type) {
       case ComposerModeType.compose:
@@ -191,40 +199,55 @@ mixin ChatComposer {
         ));
         break;
       case ComposerModeType.isVoiceRecording:
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: Icon(
-              Icons.fiber_manual_record,
-              size: 12,
-              color: Colors.red,
-            ),
-          )
-        );
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: getText(text),
-          )
-        );
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.openLock,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Icon(
+            Icons.fiber_manual_record,
+            size: 12,
+            color: Colors.red,
           ),
-          onPressed: onRecordAudioPressed,
-          key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
         ));
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.stopPlay,
+        widgets.add(Padding(
+          padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+          child: getText(text),
+        ));
+        !isStopped ? widgets.add(Container(
+          decoration: BoxDecoration(
             color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
+            borderRadius: BorderRadius.all(Radius.circular(30.0)),
           ),
-          onPressed: onRecordAudioPressed,
-          key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
-        ));
+          child: Row(
+            children: <Widget>[
+              AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: isLocked ? IconSource.lock : IconSource.openLock,
+                  color: Colors.transparent,
+                  iconColor: CustomTheme.of(context).accent,
+                  iconSize: 16.0,
+                ),
+                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+              ),
+              AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: IconSource.stopPlay,
+                  color: CustomTheme.of(context).accent,
+                  iconColor: CustomTheme.of(context).white,
+                ),
+                onPressed: onRecordAudioStopped,
+                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+              )
+            ],
+          ),
+        )): widgets.add(
+            AdaptiveIconButton(
+              icon: AdaptiveSuperellipseIcon(
+                icon: IconSource.play,
+                color: CustomTheme.of(context).accent,
+                iconColor: CustomTheme.of(context).white,
+              ),
+              key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+            )
+        );
         break;
     }
     return widgets;
