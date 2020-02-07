@@ -66,7 +66,6 @@ mixin ChatComposer {
     @required Function onShowAttachmentChooser,
     @required Function onAudioRecordingAbort,
     @required BuildContext context,
-    @required bool isLockedOrStopped,
   }) {
     AdaptiveSuperellipseIcon icon;
     Function onPressed;
@@ -151,6 +150,8 @@ mixin ChatComposer {
     @required Function onSendText,
     @required Function onRecordAudioPressed,
     @required Function onRecordAudioStopped,
+    @required Function onRecordAudioStoppedLongPress,
+    @required Function onRecordAudioLocked,
     @required Function onRecordVideoPressed,
     @required Function onCaptureImagePressed,
     @required BuildContext context,
@@ -177,14 +178,17 @@ mixin ChatComposer {
           ),
           onPressed: onRecordVideoPressed,
         ));
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.mic,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
+        widgets.add(GestureDetector(
+          onTapDown: onRecordAudioPressed,
+          onTapUp: onRecordAudioStoppedLongPress,
+          child: AdaptiveIconButton(
+            icon: AdaptiveSuperellipseIcon(
+              icon: IconSource.mic,
+              color: CustomTheme.of(context).onSurface.withOpacity(barely),
+              iconColor: CustomTheme.of(context).accent,
+            ),
+            key: Key(KeyChatComposerMixinOnRecordAudioPressedIcon),
           ),
-          onPressed: onRecordAudioPressed,
-          key: Key(KeyChatComposerMixinOnRecordAudioPressedIcon),
         ));
         break;
       case ComposerModeType.isComposing:
@@ -199,12 +203,15 @@ mixin ChatComposer {
         ));
         break;
       case ComposerModeType.isVoiceRecording:
-        widgets.add(Padding(
-          padding: const EdgeInsets.only(left: 4.0),
-          child: Icon(
-            Icons.fiber_manual_record,
-            size: 12,
-            color: Colors.red,
+        widgets.add(Visibility(
+          visible: !isStopped,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Icon(
+              Icons.fiber_manual_record,
+              size: 12,
+              color: Colors.red,
+            ),
           ),
         ));
         widgets.add(Padding(
@@ -213,7 +220,7 @@ mixin ChatComposer {
         ));
         !isStopped ? widgets.add(Container(
           decoration: BoxDecoration(
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
+            color: isLocked ? Colors.transparent : CustomTheme.of(context).onSurface.withOpacity(barely),
             borderRadius: BorderRadius.all(Radius.circular(30.0)),
           ),
           child: Row(
@@ -225,27 +232,33 @@ mixin ChatComposer {
                   iconColor: CustomTheme.of(context).accent,
                   iconSize: 16.0,
                 ),
+                onPressed: onRecordAudioLocked,
                 key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
               ),
-              AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: IconSource.stopPlay,
-                  color: CustomTheme.of(context).accent,
-                  iconColor: CustomTheme.of(context).white,
+              GestureDetector(
+                child: AdaptiveIconButton(
+                  icon: AdaptiveSuperellipseIcon(
+                    icon: IconSource.stopPlay,
+                    color: CustomTheme.of(context).accent,
+                    iconColor: CustomTheme.of(context).white,
+                  ),
+                  onPressed: onRecordAudioStopped,
+                  key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
                 ),
-                onPressed: onRecordAudioStopped,
-                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
               )
             ],
           ),
         )): widgets.add(
-            AdaptiveIconButton(
-              icon: AdaptiveSuperellipseIcon(
-                icon: IconSource.play,
-                color: CustomTheme.of(context).accent,
-                iconColor: CustomTheme.of(context).white,
+            Container(
+              padding: EdgeInsets.only(left: 50.0),
+              child: AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: IconSource.play,
+                  color: CustomTheme.of(context).accent,
+                  iconColor: CustomTheme.of(context).white,
+                ),
+                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
               ),
-              key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
             )
         );
         break;

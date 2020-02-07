@@ -201,7 +201,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     });
   }
 
-  void handleChatComposer(ChatComposerState state) {
+  void handleChatComposer(ChatComposerState state)async {
     if (state is ChatComposerRecordingAudio) {
       setState(() {
         _composingAudioTimer = state.timer;
@@ -214,14 +214,14 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       if (state.filePath != null) {
         _filePath = state.filePath;
         _knownType = ChatMsg.typeVoice;
-//        _onPrepareMessageSend();
       }
       setState(() {
         _isStopped = true;
       });
     } else if(state is ChatComposerRecordingAudioAborted){
-      _composingAudioTimer = null;
+      await Future.delayed(Duration(microseconds: 100));
       setState(() {
+        _composingAudioTimer = null;
         _dbPeakList = null;
         _isStopped = false;
         _isLocked = false;
@@ -235,13 +235,13 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     } else if (state is ChatComposerRecordingFailed) {
       _composingAudioTimer = null;
       _dbPeakList = null;
-      String chatComposeAborted;
+      String chatComposeFailed;
       if (state.error == ChatComposerStateError.missingMicrophonePermission) {
-        chatComposeAborted = L10n.get(L.chatAudioRecordingFailed);
+        chatComposeFailed = L10n.get(L.chatAudioRecordingFailed);
       } else if (state.error == ChatComposerStateError.missingCameraPermission) {
-        chatComposeAborted = L10n.get(L.chatVideoRecordingFailed);
+        chatComposeFailed = L10n.get(L.chatVideoRecordingFailed);
       }
-      showToast(chatComposeAborted);
+      showToast(chatComposeFailed);
     }
   }
 
@@ -524,13 +524,23 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
 
   Widget _buildTextComposer() {
     List<Widget> widgets = List();
-    widgets.add(buildLeftComposerPart(
-      context: context,
-      type: _getComposerType(),
-      onShowAttachmentChooser: _showAttachmentChooser,
-      onAudioRecordingAbort: _onAudioRecordingAbort,
-      isLockedOrStopped: (_isLocked || _isStopped),
-    ));
+    if(_getComposerType() != ComposerModeType.isVoiceRecording){
+      widgets.add(buildLeftComposerPart(
+        context: context,
+        type: _getComposerType(),
+        onShowAttachmentChooser: _showAttachmentChooser,
+        onAudioRecordingAbort: _onAudioRecordingAbort,
+      ));
+    }else if(_isLocked || _isStopped){
+      widgets.add(buildLeftComposerPart(
+        context: context,
+        type: _getComposerType(),
+        onShowAttachmentChooser: _showAttachmentChooser,
+        onAudioRecordingAbort: _onAudioRecordingAbort,
+      ));
+    } else{
+      widgets.add(Padding(padding: EdgeInsets.only(left: 48.0),));
+    }
     widgets.add(buildCenterComposerPart(
       context: context,
       type: _getComposerType(),
@@ -542,12 +552,14 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       context: context,
       onRecordAudioPressed: _onRecordAudioPressed,
       onRecordAudioStopped: _onAudioRecordingStopped,
+      onRecordAudioStoppedLongPress: _onAudioRecordingStoppedLongPress,
+      onRecordAudioLocked: _onAudioRecordingLocked,
       onRecordVideoPressed: _onRecordVideoPressed,
       onCaptureImagePressed: _onCaptureImagePressed,
       type: _getComposerType(),
       onSendText: _onPrepareMessageSend,
       text: _composingAudioTimer,
-      isLocked: false,
+      isLocked: _isLocked,
       isStopped: _isStopped,
     ));
     return IconTheme(
@@ -657,12 +669,25 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     return type;
   }
 
-  _onRecordAudioPressed() async {
+  _onRecordAudioPressed(TapDownDetails details) async {
+    print("[_ChatState._onRecordAudioPressed] fhaar - ");
     _chatComposerBloc.add(StartAudioRecording());
   }
 
-  _onAudioRecordingStopped() {
+  _onAudioRecordingStoppedLongPress(TapUpDetails details) {
+    print("[_ChatState._onAudioRecordingStoppedLongPress] fhaar - ");
     _chatComposerBloc.add(StopAudioRecording());
+  }
+
+  _onAudioRecordingStopped() {
+    print("[_ChatState._onAudioRecordingStopped] fhaar - ");
+    _chatComposerBloc.add(StopAudioRecording());
+  }
+
+  _onAudioRecordingLocked() {
+    setState(() {
+      _isLocked = true;
+    });
   }
 
   _onAudioRecordingAbort() {
