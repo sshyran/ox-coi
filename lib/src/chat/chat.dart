@@ -201,7 +201,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     });
   }
 
-  void handleChatComposer(ChatComposerState state)async {
+  void handleChatComposer(ChatComposerState state) async {
     if (state is ChatComposerRecordingAudio) {
       setState(() {
         _composingAudioTimer = state.timer;
@@ -218,7 +218,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       setState(() {
         _isStopped = true;
       });
-    } else if(state is ChatComposerRecordingAudioAborted){
+    } else if (state is ChatComposerRecordingAudioAborted) {
       await Future.delayed(Duration(microseconds: 100));
       setState(() {
         _composingAudioTimer = null;
@@ -524,22 +524,24 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
 
   Widget _buildTextComposer() {
     List<Widget> widgets = List();
-    if(_getComposerType() != ComposerModeType.isVoiceRecording){
+    if (_getComposerType() != ComposerModeType.isVoiceRecording) {
       widgets.add(buildLeftComposerPart(
         context: context,
         type: _getComposerType(),
         onShowAttachmentChooser: _showAttachmentChooser,
         onAudioRecordingAbort: _onAudioRecordingAbort,
       ));
-    }else if(_isLocked || _isStopped){
+    } else if (_isLocked || _isStopped) {
       widgets.add(buildLeftComposerPart(
         context: context,
         type: _getComposerType(),
         onShowAttachmentChooser: _showAttachmentChooser,
         onAudioRecordingAbort: _onAudioRecordingAbort,
       ));
-    } else{
-      widgets.add(Padding(padding: EdgeInsets.only(left: 48.0),));
+    } else {
+      widgets.add(Padding(
+        padding: EdgeInsets.only(left: 48.0),
+      ));
     }
     widgets.add(buildCenterComposerPart(
       context: context,
@@ -669,14 +671,27 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     return type;
   }
 
-  _onRecordAudioPressed(TapDownDetails details) {
-    print("[_ChatState._onRecordAudioPressed] fhaar - ");
+  double startDx;
+  double startDy;
+
+  _onRecordAudioPressed(LongPressStartDetails details) {
+    startDx = details.localPosition.dx;
+    startDy = details.localPosition.dy;
     _chatComposerBloc.add(StartAudioRecording());
   }
 
-  _onAudioRecordingStoppedLongPress(TapUpDetails details) {
-    print("[_ChatState._onAudioRecordingStoppedLongPress] fhaar - ");
-    _chatComposerBloc.add(StopAudioRecording());
+  _onAudioRecordingStoppedLongPress(LongPressEndDetails details) {
+    double dxDifference = startDx - details.localPosition.dx;
+    double dyDifference = startDy - details.localPosition.dy;
+    if (dyDifference > 50.0) {
+      //TODO: Add send method
+    } else if(dxDifference > 45.0) {
+      setState(() {
+        _isLocked = true;
+      });
+    } else {
+      _chatComposerBloc.add(StopAudioRecording());
+    }
   }
 
   _onAudioRecordingStopped() {

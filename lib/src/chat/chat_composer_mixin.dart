@@ -41,7 +41,6 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
@@ -161,7 +160,107 @@ mixin ChatComposer {
     @required bool isStopped,
   }) {
     List<Widget> widgets = List();
-    switch (type) {
+    if(type != ComposerModeType.isComposing) {
+      widgets.add(Visibility(
+        visible: type == ComposerModeType.compose,
+        child: Row(
+          children: <Widget>[
+            AdaptiveIconButton(
+              icon: AdaptiveSuperellipseIcon(
+                icon: IconSource.camera,
+                color: CustomTheme.of(context).onSurface.withOpacity(barely),
+                iconColor: CustomTheme.of(context).accent,
+              ),
+              onPressed: onCaptureImagePressed,
+            ),
+            AdaptiveIconButton(
+              icon: AdaptiveSuperellipseIcon(
+                icon: IconSource.videocam,
+                color: CustomTheme.of(context).onSurface.withOpacity(barely),
+                iconColor: CustomTheme.of(context).accent,
+              ),
+              onPressed: onRecordVideoPressed,
+            )
+          ],
+        ),
+      ));
+      widgets.add(GestureDetector(
+        onLongPressStart: onRecordAudioPressed,
+        onLongPressEnd: onRecordAudioStoppedLongPress,
+        child: Row(
+          children: <Widget>[
+            Visibility(
+              visible: type == ComposerModeType.isVoiceRecording && !isStopped,
+              child: AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: isLocked ? IconSource.lock : IconSource.openLock,
+                  color: Colors.transparent,
+                  iconColor: CustomTheme
+                      .of(context)
+                      .accent,
+                  iconSize: 16.0,
+                ),
+                onPressed: onRecordAudioLocked,
+              ),
+            ),
+            Visibility(
+              visible: type == ComposerModeType.compose,
+              child: AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: IconSource.mic,
+                  color: CustomTheme
+                      .of(context)
+                      .onSurface
+                      .withOpacity(barely),
+                  iconColor: CustomTheme
+                      .of(context)
+                      .accent,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: type == ComposerModeType.isVoiceRecording && !isStopped,
+              child: AdaptiveIconButton(
+                icon: AdaptiveSuperellipseIcon(
+                  icon: IconSource.stopPlay,
+                  color: CustomTheme
+                      .of(context)
+                      .accent,
+                  iconColor: CustomTheme
+                      .of(context)
+                      .white,
+                ),
+                onPressed: onRecordAudioStopped,
+              ),
+            ),
+            Visibility(
+              visible: type == ComposerModeType.isVoiceRecording && isStopped,
+              child: Container(
+                padding: EdgeInsets.only(left: 50.0),
+                child: AdaptiveIconButton(
+                  icon: AdaptiveSuperellipseIcon(
+                    icon: IconSource.play,
+                    color: CustomTheme.of(context).accent,
+                    iconColor: CustomTheme.of(context).white,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ));
+    }else{
+      widgets.add(AdaptiveIconButton(
+        icon: AdaptiveSuperellipseIcon(
+          icon: IconSource.send,
+          color: CustomTheme.of(context).onSurface.withOpacity(barely),
+          iconColor: CustomTheme.of(context).accent,
+        ),
+        onPressed: onSendText,
+        key: Key(KeyChatComposerMixinOnSendTextIcon),
+      ));
+    }
+    /*switch (type) {
       case ComposerModeType.compose:
         widgets.add(AdaptiveIconButton(
           icon: AdaptiveSuperellipseIcon(
@@ -283,7 +382,7 @@ mixin ChatComposer {
                 ),
               ));
         break;
-    }
+    }*/
     return widgets;
   }
 }
