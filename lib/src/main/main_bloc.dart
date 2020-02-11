@@ -67,13 +67,14 @@ import 'package:ox_coi/src/ui/strings.dart';
 import 'package:ox_coi/src/utils/constants.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
-  var _logger = Logger("main_bloc");
+  final _logger = Logger("main_bloc");
   DeltaChatCore _core = DeltaChatCore();
-  Context _context = Context();
-  var _notificationManager = NotificationManager();
-  var _pushManager = PushManager();
-  var _localNotificationManager = LocalNotificationManager();
-  var _config = Config();
+  final _context = Context();
+  final _notificationManager = NotificationManager();
+  final _pushManager = PushManager();
+  final _localNotificationManager = LocalNotificationManager();
+  final _config = Config();
+
   final ErrorBloc errorBloc;
   StreamSubscription errorBlocSubscription;
 
@@ -98,8 +99,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is PrepareApp) {
       yield MainStateLoading();
+
       try {
-        var buildContext = event.context;
+        final buildContext = event.context;
         await _initCore();
         await _openExtensionDatabase();
         await _setupDatabaseExtensions();
@@ -110,22 +112,42 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         await _setupBlocs();
         await _setupManagers(buildContext);
         add(AppLoaded());
+
       } catch (error) {
         yield MainStateFailure(error: error.toString());
       }
+
     } else if (event is AppLoaded) {
-      bool configured = await _context.isConfigured();
+      final bool configured = await _context.isConfigured();
       if (configured) {
         await _setupLoggedInAppState();
       }
-      var hasAuthenticationError = await _checkForAuthenticationError();
+
+      final bool hasAuthenticationError = await _checkForAuthenticationError();
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
+
+    } else if (event is Logout) {
+      _logout();
     }
+
     if (event is UserVisibleErrorEncountered) {
       bool configured = await _context.isConfigured();
       var hasAuthenticationError = event.userVisibleError == UserVisibleError.authenticationFailed;
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
     }
+  }
+
+  void _logout() {
+    print("[phranck] ** LOGOUT! **");
+
+    final core = Context();
+    core.close();
+
+    _core.reset(dbName: dbName);
+    _core = null;
+    _core = DeltaChatCore();
+
+    add(PrepareApp());
   }
 
   Future<void> _setupBlocs() async {

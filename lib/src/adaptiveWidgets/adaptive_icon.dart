@@ -110,6 +110,7 @@ enum IconSource {
   signature,
   serverSetting,
   feedback,
+  logout,
 }
 
 class AdaptiveIcon extends AdaptiveWidget<Icon, Icon> {
@@ -200,6 +201,7 @@ class AdaptiveIcon extends AdaptiveWidget<Icon, Icon> {
     IconSource.signature : [Icons.gesture, Icons.gesture],
     IconSource.serverSetting : [Icons.router, Icons.router],
     IconSource.feedback : [Icons.feedback, Icons.feedback],
+    IconSource.logout: [Icons.exit_to_app, Icons.exit_to_app],
   };
 
   AdaptiveIcon({

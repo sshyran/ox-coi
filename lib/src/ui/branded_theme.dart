@@ -59,6 +59,7 @@ class BrandedTheme {
   final Color aboutIcon = Colors.deepOrange[500];
   final Color feedbackIcon = Colors.amber[600];
   final Color bugReportIcon = Colors.red[600];
+  final Color logoutIcon = Colors.red[600];
   final Color accent;
   final Color onAccent;
   final Color info;

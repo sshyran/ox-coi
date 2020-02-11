@@ -54,6 +54,8 @@ class LoadApp extends MainEvent {}
 
 class AppLoaded extends MainEvent {}
 
+class Logout extends MainEvent {}
+
 class UserVisibleErrorEncountered extends MainEvent {
   final userVisibleError;
 
