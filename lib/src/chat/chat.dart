@@ -669,7 +669,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     return type;
   }
 
-  _onRecordAudioPressed(TapDownDetails details) async {
+  _onRecordAudioPressed(TapDownDetails details) {
     print("[_ChatState._onRecordAudioPressed] fhaar - ");
     _chatComposerBloc.add(StartAudioRecording());
   }

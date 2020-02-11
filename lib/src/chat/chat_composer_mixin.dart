@@ -41,6 +41,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
@@ -178,9 +179,18 @@ mixin ChatComposer {
           ),
           onPressed: onRecordVideoPressed,
         ));
-        widgets.add(GestureDetector(
-          onTapDown: onRecordAudioPressed,
-          onTapUp: onRecordAudioStoppedLongPress,
+        widgets.add(RawGestureDetector(
+          gestures: <Type, GestureRecognizerFactory>{
+            TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer instance) {
+                instance
+                  ..onTapDown = (TapDownDetails details) {
+                    onRecordAudioPressed(details);
+                  };
+              },
+            ),
+          },
           child: AdaptiveIconButton(
             icon: AdaptiveSuperellipseIcon(
               icon: IconSource.mic,
@@ -218,49 +228,60 @@ mixin ChatComposer {
           padding: const EdgeInsets.only(left: 4.0, right: 4.0),
           child: getText(text),
         ));
-        !isStopped ? widgets.add(Container(
-          decoration: BoxDecoration(
-            color: isLocked ? Colors.transparent : CustomTheme.of(context).onSurface.withOpacity(barely),
-            borderRadius: BorderRadius.all(Radius.circular(30.0)),
-          ),
-          child: Row(
-            children: <Widget>[
-              AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: isLocked ? IconSource.lock : IconSource.openLock,
-                  color: Colors.transparent,
-                  iconColor: CustomTheme.of(context).accent,
-                  iconSize: 16.0,
+        !isStopped
+            ? widgets.add(Container(
+                decoration: BoxDecoration(
+                  color: isLocked ? Colors.transparent : CustomTheme.of(context).onSurface.withOpacity(barely),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
                 ),
-                onPressed: onRecordAudioLocked,
-                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
-              ),
-              GestureDetector(
+                child: Row(
+                  children: <Widget>[
+                    AdaptiveIconButton(
+                      icon: AdaptiveSuperellipseIcon(
+                        icon: isLocked ? IconSource.lock : IconSource.openLock,
+                        color: Colors.transparent,
+                        iconColor: CustomTheme.of(context).accent,
+                        iconSize: 16.0,
+                      ),
+                      onPressed: onRecordAudioLocked,
+                      key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+                    ),
+                    RawGestureDetector(
+                      gestures: <Type, GestureRecognizerFactory>{
+                        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                          () => TapGestureRecognizer(),
+                          (TapGestureRecognizer instance) {
+                            instance
+                              ..onTapUp = (TapUpDetails details) {
+                                onRecordAudioStoppedLongPress(details);
+                              };
+                          },
+                        ),
+                      },
+                      child: AdaptiveIconButton(
+                        icon: AdaptiveSuperellipseIcon(
+                          icon: IconSource.stopPlay,
+                          color: CustomTheme.of(context).accent,
+                          iconColor: CustomTheme.of(context).white,
+                        ),
+                        onPressed: onRecordAudioStopped,
+                        key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
+                      ),
+                    )
+                  ],
+                ),
+              ))
+            : widgets.add(Container(
+                padding: EdgeInsets.only(left: 50.0),
                 child: AdaptiveIconButton(
                   icon: AdaptiveSuperellipseIcon(
-                    icon: IconSource.stopPlay,
+                    icon: IconSource.play,
                     color: CustomTheme.of(context).accent,
                     iconColor: CustomTheme.of(context).white,
                   ),
-                  onPressed: onRecordAudioStopped,
                   key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
                 ),
-              )
-            ],
-          ),
-        )): widgets.add(
-            Container(
-              padding: EdgeInsets.only(left: 50.0),
-              child: AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: IconSource.play,
-                  color: CustomTheme.of(context).accent,
-                  iconColor: CustomTheme.of(context).white,
-                ),
-                key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
-              ),
-            )
-        );
+              ));
         break;
     }
     return widgets;
