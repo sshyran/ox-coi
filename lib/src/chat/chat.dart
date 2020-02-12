@@ -556,6 +556,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       onRecordAudioStopped: _onAudioRecordingStopped,
       onRecordAudioStoppedLongPress: _onAudioRecordingStoppedLongPress,
       onRecordAudioLocked: _onAudioRecordingLocked,
+      onAudioRecordingReplay: _onAudioRecordingReplay,
       onRecordVideoPressed: _onRecordVideoPressed,
       onCaptureImagePressed: _onCaptureImagePressed,
       type: _getComposerType(),
@@ -671,18 +672,18 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     return type;
   }
 
-  double startDx;
-  double startDy;
+  double startLongPressDx;
+  double startLongPressDy;
 
   _onRecordAudioPressed(LongPressStartDetails details) {
-    startDx = details.localPosition.dx;
-    startDy = details.localPosition.dy;
+    startLongPressDx = details.localPosition.dx;
+    startLongPressDy = details.localPosition.dy;
     _chatComposerBloc.add(StartAudioRecording());
   }
 
   _onAudioRecordingStoppedLongPress(LongPressEndDetails details) {
-    double dxDifference = startDx - details.localPosition.dx;
-    double dyDifference = startDy - details.localPosition.dy;
+    double dxDifference = startLongPressDx - details.localPosition.dx;
+    double dyDifference = startLongPressDy - details.localPosition.dy;
     if (dyDifference > 50.0) {
       //TODO: Add send method
     } else if(dxDifference > 45.0) {
@@ -695,7 +696,6 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
   }
 
   _onAudioRecordingStopped() {
-    print("[_ChatState._onAudioRecordingStopped] fhaar - ");
     _chatComposerBloc.add(StopAudioRecording());
   }
 
@@ -703,6 +703,10 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     setState(() {
       _isLocked = true;
     });
+  }
+
+  _onAudioRecordingReplay(){
+
   }
 
   _onAudioRecordingAbort() {

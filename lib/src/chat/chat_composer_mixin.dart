@@ -141,7 +141,7 @@ mixin ChatComposer {
 
   Widget getText(String text) {
     return Container(
-      child: Text(text),
+      child: Text(text ?? ""),
     );
   }
 
@@ -152,6 +152,7 @@ mixin ChatComposer {
     @required Function onRecordAudioStopped,
     @required Function onRecordAudioStoppedLongPress,
     @required Function onRecordAudioLocked,
+    @required Function onAudioRecordingReplay,
     @required Function onRecordVideoPressed,
     @required Function onCaptureImagePressed,
     @required BuildContext context,
@@ -160,7 +161,7 @@ mixin ChatComposer {
     @required bool isStopped,
   }) {
     List<Widget> widgets = List();
-    if(type != ComposerModeType.isComposing) {
+    if (type != ComposerModeType.isComposing) {
       widgets.add(Visibility(
         visible: type == ComposerModeType.compose,
         child: Row(
@@ -184,6 +185,28 @@ mixin ChatComposer {
           ],
         ),
       ));
+      widgets.add(Visibility(
+        visible: type != ComposerModeType.compose,
+        child: Row(
+          children: <Widget>[
+            Visibility(
+              visible: !isStopped,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Icon(
+                  Icons.fiber_manual_record,
+                  size: 12,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+              child: getText(text),
+            )
+          ],
+        ),
+      ));
       widgets.add(GestureDetector(
         onLongPressStart: onRecordAudioPressed,
         onLongPressEnd: onRecordAudioStoppedLongPress,
@@ -195,9 +218,7 @@ mixin ChatComposer {
                 icon: AdaptiveSuperellipseIcon(
                   icon: isLocked ? IconSource.lock : IconSource.openLock,
                   color: Colors.transparent,
-                  iconColor: CustomTheme
-                      .of(context)
-                      .accent,
+                  iconColor: CustomTheme.of(context).accent,
                   iconSize: 16.0,
                 ),
                 onPressed: onRecordAudioLocked,
@@ -208,13 +229,8 @@ mixin ChatComposer {
               child: AdaptiveIconButton(
                 icon: AdaptiveSuperellipseIcon(
                   icon: IconSource.mic,
-                  color: CustomTheme
-                      .of(context)
-                      .onSurface
-                      .withOpacity(barely),
-                  iconColor: CustomTheme
-                      .of(context)
-                      .accent,
+                  color: CustomTheme.of(context).onSurface.withOpacity(barely),
+                  iconColor: CustomTheme.of(context).accent,
                 ),
               ),
             ),
@@ -223,12 +239,8 @@ mixin ChatComposer {
               child: AdaptiveIconButton(
                 icon: AdaptiveSuperellipseIcon(
                   icon: IconSource.stopPlay,
-                  color: CustomTheme
-                      .of(context)
-                      .accent,
-                  iconColor: CustomTheme
-                      .of(context)
-                      .white,
+                  color: CustomTheme.of(context).accent,
+                  iconColor: CustomTheme.of(context).white,
                 ),
                 onPressed: onRecordAudioStopped,
               ),
@@ -243,13 +255,14 @@ mixin ChatComposer {
                     color: CustomTheme.of(context).accent,
                     iconColor: CustomTheme.of(context).white,
                   ),
+                  onPressed: onAudioRecordingReplay,
                 ),
               ),
             )
           ],
         ),
       ));
-    }else{
+    } else {
       widgets.add(AdaptiveIconButton(
         icon: AdaptiveSuperellipseIcon(
           icon: IconSource.send,
@@ -260,69 +273,7 @@ mixin ChatComposer {
         key: Key(KeyChatComposerMixinOnSendTextIcon),
       ));
     }
-    /*switch (type) {
-      case ComposerModeType.compose:
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.camera,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
-          ),
-          onPressed: onCaptureImagePressed,
-        ));
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.videocam,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
-          ),
-          onPressed: onRecordVideoPressed,
-        ));
-        widgets.add(RawGestureDetector(
-          gestures: <Type, GestureRecognizerFactory>{
-            TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                  () => TapGestureRecognizer(),
-                  (TapGestureRecognizer instance) {
-                instance
-                  ..onTapDown = (TapDownDetails details) {
-                    onRecordAudioPressed(details);
-                  };
-              },
-            ),
-          },
-          child: AdaptiveIconButton(
-            icon: AdaptiveSuperellipseIcon(
-              icon: IconSource.mic,
-              color: CustomTheme.of(context).onSurface.withOpacity(barely),
-              iconColor: CustomTheme.of(context).accent,
-            ),
-            key: Key(KeyChatComposerMixinOnRecordAudioPressedIcon),
-          ),
-        ));
-        break;
-      case ComposerModeType.isComposing:
-        widgets.add(AdaptiveIconButton(
-          icon: AdaptiveSuperellipseIcon(
-            icon: IconSource.send,
-            color: CustomTheme.of(context).onSurface.withOpacity(barely),
-            iconColor: CustomTheme.of(context).accent,
-          ),
-          onPressed: onSendText,
-          key: Key(KeyChatComposerMixinOnSendTextIcon),
-        ));
-        break;
-      case ComposerModeType.isVoiceRecording:
-        widgets.add(Visibility(
-          visible: !isStopped,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: Icon(
-              Icons.fiber_manual_record,
-              size: 12,
-              color: Colors.red,
-            ),
-          ),
-        ));
+    /*
         widgets.add(Padding(
           padding: const EdgeInsets.only(left: 4.0, right: 4.0),
           child: getText(text),
@@ -345,44 +296,10 @@ mixin ChatComposer {
                       onPressed: onRecordAudioLocked,
                       key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
                     ),
-                    RawGestureDetector(
-                      gestures: <Type, GestureRecognizerFactory>{
-                        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                          () => TapGestureRecognizer(),
-                          (TapGestureRecognizer instance) {
-                            instance
-                              ..onTapUp = (TapUpDetails details) {
-                                onRecordAudioStoppedLongPress(details);
-                              };
-                          },
-                        ),
-                      },
-                      child: AdaptiveIconButton(
-                        icon: AdaptiveSuperellipseIcon(
-                          icon: IconSource.stopPlay,
-                          color: CustomTheme.of(context).accent,
-                          iconColor: CustomTheme.of(context).white,
-                        ),
-                        onPressed: onRecordAudioStopped,
-                        key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
-                      ),
-                    )
                   ],
                 ),
               ))
-            : widgets.add(Container(
-                padding: EdgeInsets.only(left: 50.0),
-                child: AdaptiveIconButton(
-                  icon: AdaptiveSuperellipseIcon(
-                    icon: IconSource.play,
-                    color: CustomTheme.of(context).accent,
-                    iconColor: CustomTheme.of(context).white,
-                  ),
-                  key: Key(KeyChatComposerMixinOnRecordAudioSendIcon),
-                ),
-              ));
-        break;
-    }*/
+    */
     return widgets;
   }
 }

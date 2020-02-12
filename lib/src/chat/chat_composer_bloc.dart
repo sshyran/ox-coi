@@ -59,6 +59,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   String _audioPath;
   bool _removeFirstEntry = false;
   int _cutoffValue = 1;
+  List<double> _dbPeakList = List<double>();
 
   @override
   ChatComposerState get initialState => ChatComposerInitial();
@@ -107,15 +108,15 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   }
 
   Future<void> startAudioRecorder() async {
-    var dbPeakList = List<double>();
+    _dbPeakList = List<double>();
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
     _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
-      dbPeakList.add((newDBPeak / 4));
+      _dbPeakList.add((newDBPeak / 4));
       if (_removeFirstEntry) {
-        dbPeakList.removeRange(0, _cutoffValue);
+        _dbPeakList.removeRange(0, _cutoffValue);
       }
-      add(UpdateAudioDBPeak(dbPeakList: dbPeakList));
+      add(UpdateAudioDBPeak(dbPeakList: _dbPeakList));
     });
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
       String timer = getTimerFromTimestamp(e.currentPosition.toInt());
