@@ -42,6 +42,8 @@
 
 import 'package:delta_chat_core/delta_chat_core.dart' as Core;
 import 'package:flutter/material.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
+import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
 import 'package:ox_coi/src/chat/chat.dart';
 import 'package:ox_coi/src/contact/contact_details.dart';
 import 'package:ox_coi/src/contact/contact_item_bloc.dart';
@@ -52,6 +54,7 @@ import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/navigation/navigatable.dart';
 import 'package:ox_coi/src/navigation/navigation.dart';
+import 'package:ox_coi/src/ui/dimensions.dart';
 
 import 'chat_change_bloc.dart';
 import 'chat_change_event_state.dart';
@@ -74,9 +77,9 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
   ContactItemBloc _contactBloc = ContactItemBloc();
   ChatChangeBloc _chatChangeBloc = ChatChangeBloc();
   Navigation _navigation = Navigation();
-  List<GroupPopupMenu> choices;
+  List<GroupParticipantMenu> choices;
 
-  void _select(GroupPopupMenu choice) {
+  void _select(GroupParticipantMenu choice) {
     switch (choice.action) {
       case GroupParticipantActions.info:
         goToProfile("", "");
@@ -123,15 +126,21 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
   }
 
   getMoreButton() {
-    return PopupMenuButton<GroupPopupMenu>(
+    return PopupMenuButton<GroupParticipantMenu>(
       key: Key("keyMoreButton_${widget.contactId}"),
       elevation: 3.2,
       onSelected: _select,
       itemBuilder: (BuildContext context) {
-        return choices.map((GroupPopupMenu choice) {
-          return PopupMenuItem<GroupPopupMenu>(
+        return choices.map((GroupParticipantMenu choice) {
+          return PopupMenuItem<GroupParticipantMenu>(
             value: choice,
-            child: Text(choice.title),
+            child: Row(
+                  children: <Widget>[
+                    AdaptiveIcon(icon: choice.iconSource),
+                    Padding(padding: EdgeInsets.only(right: iconTextPadding)),
+                    Text(choice.title),
+                  ],
+                ),
           );
         }).toList();
       },
@@ -154,20 +163,21 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
   }
 }
 
-List<GroupPopupMenu> participantChoices = <GroupPopupMenu>[
-  GroupPopupMenu(title: L10n.get(L.groupParticipantActionInfo), action: GroupParticipantActions.info),
-  GroupPopupMenu(title: L10n.get(L.groupParticipantActionSendMessage), action: GroupParticipantActions.sendMessage),
-  GroupPopupMenu(title: L10n.get(L.groupParticipantActionRemove), action: GroupParticipantActions.remove),
+List<GroupParticipantMenu> participantChoices = <GroupParticipantMenu>[
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionInfo), iconSource: IconSource.info, action: GroupParticipantActions.info),
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionSendMessage), iconSource: IconSource.chat, action: GroupParticipantActions.sendMessage),
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionRemove), iconSource: IconSource.delete, action: GroupParticipantActions.remove),
 ];
 
-List<GroupPopupMenu> meChoices = <GroupPopupMenu>[
-  GroupPopupMenu(title: L10n.get(L.groupParticipantActionInfo), action: GroupParticipantActions.info),
-  GroupPopupMenu(title: L10n.get(L.groupParticipantActionSendMessage), action: GroupParticipantActions.sendMessage),
+List<GroupParticipantMenu> meChoices = <GroupParticipantMenu>[
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionInfo), iconSource: IconSource.info, action: GroupParticipantActions.info),
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionSendMessage), iconSource: IconSource.chat, action: GroupParticipantActions.sendMessage),
 ];
 
-class GroupPopupMenu {
+class GroupParticipantMenu {
   String title;
+  IconSource iconSource;
   GroupParticipantActions action;
 
-  GroupPopupMenu({this.title, this.action});
+  GroupParticipantMenu({this.title, this.iconSource, this.action});
 }

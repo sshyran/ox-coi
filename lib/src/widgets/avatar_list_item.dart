@@ -66,6 +66,7 @@ class AvatarListItem extends StatelessWidget {
   final bool isInvite;
   final PopupMenuButton moreButton;
   final String headerText;
+  final bool showHeaderText;
 
   AvatarListItem({
     @required this.title,
@@ -83,6 +84,8 @@ class AvatarListItem extends StatelessWidget {
     this.isInvite = false,
     this.moreButton,
     this.headerText,
+    this.showHeaderText = true,
+
   });
 
   @override
@@ -90,7 +93,7 @@ class AvatarListItem extends StatelessWidget {
     return Column(
       children: [
         Visibility(
-          visible: headerText != null,
+          visible: headerText != null && showHeaderText,
           child: ListGroupHeader(
             text: headerText,
             padding: EdgeInsets.only(

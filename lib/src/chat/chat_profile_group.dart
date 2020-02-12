@@ -48,6 +48,7 @@ import 'package:ox_coi/src/chat/chat_change_event_state.dart';
 import 'package:ox_coi/src/chat/chat_profile_group_contact_item.dart';
 import 'package:ox_coi/src/contact/contact_list_bloc.dart';
 import 'package:ox_coi/src/contact/contact_list_event_state.dart';
+import 'package:ox_coi/src/flagged/flagged.dart';
 import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/navigation/navigatable.dart';
@@ -56,8 +57,10 @@ import 'package:ox_coi/src/ui/color.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
+import 'package:ox_coi/src/widgets/list_group_header.dart';
 import 'package:ox_coi/src/widgets/profile_body.dart';
 import 'package:ox_coi/src/widgets/profile_header.dart';
+import 'package:ox_coi/src/widgets/settings_item.dart';
 
 import 'chat_add_group_participants.dart';
 import 'chat_bloc.dart';
@@ -114,28 +117,57 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       buildProfileImageAndTitle(chatState),
+                      SettingsItem(
+                        icon: IconSource.flag,
+                        text: L10n.get(L.settingItemFlaggedTitle),
+                        iconBackground: CustomTheme.of(context).flagIcon,
+                        onTap: () => _settingsItemTapped(
+                            context, SettingsItemName.flagged),
+                      ),
+                      ListGroupHeader(
+                        text: L10n.get(L.settingP),
+                      ),
+                      SettingsItem(
+                        icon: IconSource.notifications,
+                        text: L10n.get(L.settingItemNotificationsTitle),
+                        iconBackground:
+                            CustomTheme.of(context).notificationIcon,
+                        onTap: () => _settingsItemTapped(
+                            context, SettingsItemName.notification),
+                      ),
                       Padding(
                           padding: EdgeInsets.only(left: 20.0),
                           child: ProfileData(
-                            text: L10n.getFormatted(L.participantXP, [state.contactIds.length], count: state.contactIds.length),
+                            text: L10n.getFormatted(
+                                L.participantXP, [state.contactIds.length],
+                                count: state.contactIds.length),
                             child: ProfileMemberHeaderText(),
                           )),
                       Divider(),
                       Visibility(
                         visible: !chatState.isRemoved,
                         child: InkWell(
-                          onTap: () => _navigation.push(context,
-                              MaterialPageRoute(builder: (context) => ChatAddGroupParticipants(chatId: widget.chatId, contactIds: state.contactIds))),
+                          onTap: () => _navigation.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ChatAddGroupParticipants(
+                                          chatId: widget.chatId,
+                                          contactIds: state.contactIds))),
                           child: Container(
-                            padding: const EdgeInsets.only(left: 16.0, bottom: 12.0),
+                            padding:
+                                const EdgeInsets.only(left: 16.0, bottom: 12.0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 CircleAvatar(
                                   radius: listAvatarRadius,
-                                  backgroundColor: CustomTheme.of(context).accent,
-                                  foregroundColor: CustomTheme.of(context).onAccent,
-                                  child: AdaptiveIcon(icon: IconSource.groupAdd),
+                                  backgroundColor:
+                                      CustomTheme.of(context).accent,
+                                  foregroundColor:
+                                      CustomTheme.of(context).onAccent,
+                                  child:
+                                      AdaptiveIcon(icon: IconSource.groupAdd),
                                   key: Key(keyChatProfileGroupAddParticipant),
                                 ),
                                 Padding(
@@ -143,7 +175,12 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
                                   child: Text(
                                     L10n.get(L.participantAdd),
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.subhead.apply(color: CustomTheme.of(context).accent),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subhead
+                                        .apply(
+                                            color:
+                                                CustomTheme.of(context).accent),
                                   ),
                                 )
                               ],
@@ -153,17 +190,19 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                        child: _buildGroupMemberList(state, chatState.isRemoved),
+                        child:
+                            _buildGroupMemberList(state, chatState.isRemoved),
                       ),
                       Divider(
                         height: dividerHeight,
                       ),
-                      ProfileAction(
-                        iconData: IconSource.delete,
-                        key: Key(keyChatProfileGroupDelete),
+                      SettingsItem(
+                        icon: IconSource.delete,
                         text: L10n.get(L.groupLeave),
-                        onTap: () => showActionDialog(context, ProfileActionType.leave, _leaveGroup),
-                        color: CustomTheme.of(context).error,
+                        iconBackground: CustomTheme.of(context).error,
+                        textColor: CustomTheme.of(context).error,
+                        onTap: () => showActionDialog(
+                           context, ProfileActionType.leave, _leaveGroup),
                       ),
                     ],
                   );
@@ -178,25 +217,43 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
     );
   }
 
+  _settingsItemTapped(BuildContext context, SettingsItemName settingsItemName) {
+    switch (settingsItemName) {
+      case SettingsItemName.flagged:
+        _navigation.push(
+          context,
+          MaterialPageRoute(builder: (context) => Flagged()),
+        );
+        break;
+      case SettingsItemName.notification:
+        _navigation.pushNamed(context, Navigation.settingsNotifications);
+        break;
+      default:
+        break;
+    }
+  }
+
   ProfileData buildProfileImageAndTitle(ChatStateSuccess state) {
     return ProfileData(
-        imageBackgroundColor: widget.chatColor,
-        text: state.name,
-        textStyle: Theme.of(context).textTheme.title,
-        iconData: state.isVerified ? IconSource.verifiedUser : null,
-        imageActionCallback: state.isRemoved ? null : _editPhotoCallback,
-        avatarPath: state.avatarPath,
-        showWhiteImageIcon: true,
-        editActionCallback: state.isRemoved ? null : _goToEditName,
-        child: ProfileHeader(),
-      );
+      imageBackgroundColor: widget.chatColor,
+      text: state.name,
+      textStyle: Theme.of(context).textTheme.title,
+      iconData: state.isVerified ? IconSource.verifiedUser : null,
+      imageActionCallback: state.isRemoved ? null : _editPhotoCallback,
+      avatarPath: state.avatarPath,
+      showWhiteImageIcon: true,
+      editActionCallback: state.isRemoved ? null : _goToEditName,
+      child: ProfileHeader(),
+    );
   }
 
   _editPhotoCallback(String avatarPath) {
-    _chatChangeBloc.add(SetImagePath(chatId: widget.chatId, newPath: avatarPath));
+    _chatChangeBloc
+        .add(SetImagePath(chatId: widget.chatId, newPath: avatarPath));
   }
 
-  ListView _buildGroupMemberList(ContactListStateSuccess state, bool isRemoved) {
+  ListView _buildGroupMemberList(
+      ContactListStateSuccess state, bool isRemoved) {
     return ListView.separated(
         separatorBuilder: (context, index) => Divider(
               height: dividerHeight,
@@ -208,7 +265,11 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
         itemBuilder: (BuildContext context, int index) {
           var contactId = state.contactIds[index];
           var key = "$contactId-${state.contactLastUpdateValues[index]}";
-          return ChatProfileGroupContactItem(chatId: widget.chatId, contactId: contactId, showMoreButton: !isRemoved, key: key);
+          return ChatProfileGroupContactItem(
+              chatId: widget.chatId,
+              contactId: contactId,
+              showMoreButton: !isRemoved,
+              key: key);
         });
   }
 
