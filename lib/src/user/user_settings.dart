@@ -64,16 +64,14 @@ class UserSettings extends StatefulWidget {
 
 class _UserSettingsState extends State<UserSettings> {
   UserChangeBloc _userChangeBloc = UserChangeBloc();
-  Navigation navigation = Navigation();
-
+  Navigation _navigation = Navigation();
   TextEditingController _usernameController = TextEditingController();
-
   String _avatar;
 
   @override
   void initState() {
     super.initState();
-    navigation.current = Navigatable(Type.settingsUser);
+    _navigation.current = Navigatable(Type.settingsUser);
     _userChangeBloc.add(RequestUser());
     _userChangeBloc.listen((state) => _handleUserChangeStateChange(state));
   }
@@ -87,35 +85,28 @@ class _UserSettingsState extends State<UserSettings> {
         _avatar = config.avatarPath;
       }
     } else if (state is UserChangeStateApplied) {
-      navigation.pop(context);
+      _navigation.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AdaptiveAppBar(
-          leadingIcon: AdaptiveIconButton(
-            icon: AdaptiveIcon(
-              icon: IconSource.close,
-            ),
-            onPressed: () => navigation.pop(context),
-          ),
-          title: Text(L10n.get(L.profileEdit)),
-          actions: <Widget>[
-            AdaptiveIconButton(
-                icon: AdaptiveIcon(
-                  icon: IconSource.check,
-                ),
-                key: Key(keyUserSettingsCheckIconButton),
-                onPressed: _saveChanges)
-          ],
+      appBar: AdaptiveAppBar(
+        leadingIcon: AdaptiveIconButton(
+          icon: AdaptiveIcon(icon: IconSource.close),
+          onPressed: () => _navigation.pop(context),
         ),
-        body: buildForm());
-  }
-
-  Widget buildForm() {
-    return BlocBuilder(
+        title: Text(L10n.get(L.profileEdit)),
+        actions: <Widget>[
+          AdaptiveIconButton(
+            icon: AdaptiveIcon(icon: IconSource.check),
+            key: Key(keyUserSettingsCheckIconButton),
+            onPressed: _saveChanges,
+          )
+        ],
+      ),
+      body: BlocBuilder(
         bloc: _userChangeBloc,
         builder: (context, state) {
           if (state is UserChangeStateSuccess) {
@@ -123,13 +114,16 @@ class _UserSettingsState extends State<UserSettings> {
               nameController: _usernameController,
               avatar: _avatar,
               imageChangedCallback: _setAvatar,
+              placeholder: L10n.get(L.username),
             );
           } else if (state is UserChangeStateFailure) {
             return new Text(state.error);
           } else {
             return new Container();
           }
-        });
+        },
+      ),
+    );
   }
 
   _setAvatar(String avatarPath) {

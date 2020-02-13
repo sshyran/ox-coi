@@ -63,7 +63,7 @@ import 'package:ox_coi/src/widgets/settings_item.dart';
 import 'chat_add_group_participants.dart';
 import 'chat_bloc.dart';
 import 'chat_event_state.dart';
-import 'edit_name.dart';
+import 'edit_group_profile.dart';
 
 class ChatProfileGroup extends StatefulWidget {
   final int chatId;
@@ -84,7 +84,6 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
   // ignore: close_sinks
   ChatBloc _chatBloc;
   Navigation _navigation = Navigation();
-  String _chatName;
 
   @override
   void initState() {
@@ -106,7 +105,6 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
       bloc: _chatBloc,
       builder: (context, chatState) {
         if (chatState is ChatStateSuccess) {
-          _chatName = chatState.name;
           return BlocBuilder(
               bloc: _contactListBloc,
               builder: (context, state) {
@@ -200,7 +198,7 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
       imageActionCallback: state.isRemoved ? null : _editPhotoCallback,
       avatarPath: state.avatarPath,
       showWhiteImageIcon: true,
-      editActionCallback: state.isRemoved ? null : _goToEditName,
+      editActionCallback: state.isRemoved ? null : _openEditGroupProfile,
       child: ProfileHeader(),
     );
   }
@@ -237,17 +235,15 @@ class _ChatProfileGroupState extends State<ChatProfileGroup> {
     _navigation.popUntilRoot(context);
   }
 
-  void _goToEditName() {
+  void _openEditGroupProfile() {
     _navigation.push(
       context,
-      MaterialPageRoute<EditName>(
+      MaterialPageRoute<EditGroupProfile>(
         builder: (context) {
           return BlocProvider.value(
             value: _chatBloc,
-            child: EditName(
+            child: EditGroupProfile(
               chatId: widget.chatId,
-              actualName: _chatName,
-              title: L10n.get(L.groupRename),
             ),
           );
         },

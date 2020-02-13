@@ -339,8 +339,15 @@ class EditableProfileHeader extends StatelessWidget {
   final Function imageChangedCallback;
   final String avatar;
   final TextEditingController nameController;
+  final String placeholder;
 
-  const EditableProfileHeader({Key key, @required this.imageChangedCallback, @required this.avatar, @required this.nameController}) : super(key: key);
+  const EditableProfileHeader({
+    Key key,
+    @required this.imageChangedCallback,
+    @required this.avatar,
+    @required this.nameController,
+    @required this.placeholder,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +373,7 @@ class EditableProfileHeader extends StatelessWidget {
                       key: Key(keyUserSettingsUserSettingsUsernameLabel),
                       maxLines: 1,
                       controller: nameController,
-                      decoration: InputDecoration(labelText: L10n.get(L.username))),
+                      decoration: InputDecoration(labelText: placeholder)),
                 ],
               ),
             ),
