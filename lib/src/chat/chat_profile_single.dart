@@ -120,72 +120,68 @@ class _ChatProfileOneToOneState extends State<ChatProfileOneToOne> {
 
   Widget _buildSingleProfileInfo(String chatName, String email, Color color,
       bool isVerified, String imagePath, String phoneNumbers) {
-    return SingleChildScrollView(
-      child: IntrinsicHeight(
-        child: Container(
-          color: CustomTheme.of(context).background,
-          child: Column(
-            children: <Widget>[
-              ProfileData(
-                text: chatName,
-                secondText: email,
-                avatarPath: imagePath,
-                placeholderText: L10n.get(L.profileNoUsername),
-                imageBackgroundColor:
-                    CustomTheme.of(context).onBackground.withOpacity(barely),
-                withPlaceholder: true,
-                editActionCallback: () =>
-                    _editContact(context, chatName, email, phoneNumbers),
-                child: ProfileHeader(),
-              ),
-              SettingsItem(
-                icon: IconSource.flag,
-                text: L10n.get(L.settingItemFlaggedTitle),
-                iconBackground: CustomTheme.of(context).flagIcon,
-                onTap: () =>
-                    _settingsItemTapped(context, SettingsItemName.flagged),
-              ),
-              SettingsItem(
-                icon: IconSource.block,
-                text: L10n.get(L.settingItemBlockedTitle),
-                iconBackground: CustomTheme.of(context).blockIcon,
-                onTap: () => showActionDialog(
-                  context,
-                  ProfileActionType.block,
-                  _blockContact,
-                  {
-                    ProfileActionParams.name: chatName,
-                    ProfileActionParams.email: email,
-                  },
-                ),
-              ),
-              if (!widget.isSelfTalk)
-                ListGroupHeader(
-                  text: L10n.get(L.settingP),
-                ),
-              if (!widget.isSelfTalk)
-                SettingsItem(
-                  icon: IconSource.notifications,
-                  text: L10n.get(L.settingItemNotificationsTitle),
-                  iconBackground: CustomTheme.of(context).notificationIcon,
-                  onTap: () =>
-                      _settingsItemTapped(context, SettingsItemName.notification),
-                ),
-              if (!isInvite())
-                ListGroupHeader(
-                  text: "",
-                ),
-              if (!isInvite())
-                SettingsItem(
-                  icon: IconSource.delete,
-                  text: L10n.get(L.chatDeleteP),
-                  textColor: CustomTheme.of(context).error,
-                  iconBackground: CustomTheme.of(context).blockIcon,
-                  onTap: () => _deleteChat(),
-                ),
-            ],
+    return Container(
+      color: CustomTheme.of(context).background,
+      child: Column(
+        children: <Widget>[
+          ProfileData(
+            text: chatName,
+            secondText: email,
+            avatarPath: imagePath,
+            placeholderText: L10n.get(L.profileNoUsername),
+            imageBackgroundColor:
+                CustomTheme.of(context).onBackground.withOpacity(barely),
+            withPlaceholder: true,
+            editActionCallback: () =>
+                _editContact(context, chatName, email, phoneNumbers),
+            child: ProfileHeader(),
           ),
-        ),
+          SettingsItem(
+            icon: IconSource.flag,
+            text: L10n.get(L.settingItemFlaggedTitle),
+            iconBackground: CustomTheme.of(context).flagIcon,
+            onTap: () =>
+                _settingsItemTapped(context, SettingsItemName.flagged),
+          ),
+          SettingsItem(
+            icon: IconSource.block,
+            text: L10n.get(L.settingItemBlockedTitle),
+            iconBackground: CustomTheme.of(context).blockIcon,
+            onTap: () => showActionDialog(
+              context,
+              ProfileActionType.block,
+              _blockContact,
+              {
+                ProfileActionParams.name: chatName,
+                ProfileActionParams.email: email,
+              },
+            ),
+          ),
+          if (!widget.isSelfTalk)
+            ListGroupHeader(
+              text: L10n.get(L.settingP),
+            ),
+          if (!widget.isSelfTalk)
+            SettingsItem(
+              icon: IconSource.notifications,
+              text: L10n.get(L.settingItemNotificationsTitle),
+              iconBackground: CustomTheme.of(context).notificationIcon,
+              onTap: () =>
+                  _settingsItemTapped(context, SettingsItemName.notification),
+            ),
+          if (!isInvite())
+            ListGroupHeader(
+              text: "",
+            ),
+          if (!isInvite())
+            SettingsItem(
+              icon: IconSource.delete,
+              text: L10n.get(L.chatDeleteP),
+              textColor: CustomTheme.of(context).error,
+              iconBackground: CustomTheme.of(context).blockIcon,
+              onTap: () => _deleteChat(),
+            ),
+        ],
       ),
     );
   }
