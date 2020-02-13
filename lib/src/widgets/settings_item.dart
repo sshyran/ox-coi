@@ -73,7 +73,7 @@ class SettingsItem extends StatelessWidget {
   final Function onTap;
   final bool showSwitch;
   final Function onSwitchChanged;
-  Color textColor;
+  final Color textColor;
 
   SettingsItem({
     Key key,
@@ -88,7 +88,7 @@ class SettingsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (this.textColor == null) this.textColor = CustomTheme.of(context).onSurface;
+    
     ThemeKey actualKey = CustomTheme.instanceOf(context).actualThemeKey;
     return InkWell(
       onTap: onTap,
@@ -109,7 +109,7 @@ class SettingsItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   text,
-                  style: Theme.of(context).textTheme.body1.apply(color: this.textColor ),
+                  style: Theme.of(context).textTheme.body1.apply(color: this.textColor ?? CustomTheme.of(context).onSurface),
                 ),
               ),
               Visibility(

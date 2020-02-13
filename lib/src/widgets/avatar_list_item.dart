@@ -85,7 +85,6 @@ class AvatarListItem extends StatelessWidget {
     this.moreButton,
     this.headerText,
     this.showHeaderText = true,
-
   });
 
   @override
@@ -111,12 +110,9 @@ class AvatarListItem extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: !isSelected ? CustomTheme.of(context).surface : CustomTheme.of(context).accent.withOpacity(barely),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: CustomTheme.of(context).onBackground.withOpacity(barely),
-                    ),
-                  ),
+                  color: !isSelected
+                      ? CustomTheme.of(context).surface
+                      : CustomTheme.of(context).accent.withOpacity(barely),
                 ),
                 padding: const EdgeInsets.all(listItemPadding),
                 child: Row(
@@ -129,7 +125,8 @@ class AvatarListItem extends StatelessWidget {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: listAvatarTextPadding),
+                        padding:
+                            const EdgeInsets.only(left: listAvatarTextPadding),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -138,21 +135,34 @@ class AvatarListItem extends StatelessWidget {
                               children: <Widget>[
                                 titleIcon != null
                                     ? Padding(
-                                        padding: const EdgeInsets.only(right: iconTextPadding),
+                                        padding: const EdgeInsets.only(
+                                            right: iconTextPadding),
                                         child: titleIcon,
                                       )
                                     : Container(),
-                                Expanded(child: shouldHighlight() ? getHighlightedTitle(context) : getTitle(context)),
+                                Expanded(
+                                    child: shouldHighlight()
+                                        ? getHighlightedTitle(context)
+                                        : getTitle(context)),
                                 Visibility(
-                                    visible: timestamp != null && timestamp != 0,
+                                    visible:
+                                        timestamp != null && timestamp != 0,
                                     child: Text(
                                       getChatListTime(timestamp),
                                       style: shouldHighlight()
                                           ? Theme.of(context)
                                               .textTheme
                                               .caption
-                                              .copyWith(color: CustomTheme.of(context).onSurface, fontWeight: FontWeight.bold)
-                                          : Theme.of(context).textTheme.caption.copyWith(color: CustomTheme.of(context).onSurface),
+                                              .copyWith(
+                                                  color: CustomTheme.of(context)
+                                                      .onSurface,
+                                                  fontWeight: FontWeight.bold)
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .caption
+                                              .copyWith(
+                                                  color: CustomTheme.of(context)
+                                                      .onSurface),
                                     )),
                               ],
                             ),
@@ -161,14 +171,16 @@ class AvatarListItem extends StatelessWidget {
                                 Visibility(
                                   visible: subTitleIcon != null,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(right: iconTextPadding),
+                                    padding: const EdgeInsets.only(
+                                        right: iconTextPadding),
                                     child: subTitleIcon,
                                   ),
                                 ),
                                 Visibility(
                                   visible: isVerified,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(right: iconTextPadding),
+                                    padding: const EdgeInsets.only(
+                                        right: iconTextPadding),
                                     child: AdaptiveIcon(
                                       icon: IconSource.verifiedUser,
                                       size: iconSize,
@@ -183,13 +195,16 @@ class AvatarListItem extends StatelessWidget {
                                     width: iconSize,
                                     height: iconSize,
                                     decoration: BoxDecoration(
-                                        color: Colors.orangeAccent, borderRadius: BorderRadius.circular(listInviteUnreadIndicatorBorderRadius)),
+                                        color: Colors.orangeAccent,
+                                        borderRadius: BorderRadius.circular(
+                                            listInviteUnreadIndicatorBorderRadius)),
                                     // TODO remove Colors.xyz call as soon as possible
                                     child: Text(
                                       "!",
                                       style: TextStyle(
                                           color: CustomTheme.of(context).white,
-                                          fontSize: listInviteUnreadIndicatorFontSize,
+                                          fontSize:
+                                              listInviteUnreadIndicatorFontSize,
                                           fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
                                     ),
@@ -203,10 +218,17 @@ class AvatarListItem extends StatelessWidget {
                                     height: iconSize,
                                     decoration: BoxDecoration(
                                         color: CustomTheme.of(context).accent,
-                                        borderRadius: BorderRadius.circular(listInviteUnreadIndicatorBorderRadius)),
+                                        borderRadius: BorderRadius.circular(
+                                            listInviteUnreadIndicatorBorderRadius)),
                                     child: Text(
-                                      freshMessageCount <= 99 ? freshMessageCount.toString() : "99+",
-                                      style: TextStyle(color: CustomTheme.of(context).onAccent, fontSize: listInviteUnreadIndicatorFontSize),
+                                      freshMessageCount <= 99
+                                          ? freshMessageCount.toString()
+                                          : "99+",
+                                      style: TextStyle(
+                                          color:
+                                              CustomTheme.of(context).onAccent,
+                                          fontSize:
+                                              listInviteUnreadIndicatorFontSize),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -224,9 +246,13 @@ class AvatarListItem extends StatelessWidget {
                     Visibility(
                       visible: isSelectable,
                       child: AdaptiveIcon(
-                        icon: isSelected ? IconSource.checkedCircle : IconSource.circle,
+                        icon: isSelected
+                            ? IconSource.checkedCircle
+                            : IconSource.circle,
                         size: iconSelectedSize,
-                        color: isSelected ? CustomTheme.of(context).accent : CustomTheme.of(context).onSurface,
+                        color: isSelected
+                            ? CustomTheme.of(context).accent
+                            : CustomTheme.of(context).onSurface,
                       ),
                     ),
                   ],
@@ -241,7 +267,8 @@ class AvatarListItem extends StatelessWidget {
 
   bool hasNewMessages() => freshMessageCount != null && freshMessageCount > 0;
 
-  bool shouldHighlight() => isInvite || (freshMessageCount != null && freshMessageCount > 0);
+  bool shouldHighlight() =>
+      isInvite || (freshMessageCount != null && freshMessageCount > 0);
 
   StatelessWidget getTitle(BuildContext context) {
     return Visibility(
@@ -250,7 +277,10 @@ class AvatarListItem extends StatelessWidget {
           title != null ? title : "",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.body2.copyWith(color: CustomTheme.of(context).onSurface),
+          style: Theme.of(context)
+              .textTheme
+              .body2
+              .copyWith(color: CustomTheme.of(context).onSurface),
         ));
   }
 
@@ -261,7 +291,9 @@ class AvatarListItem extends StatelessWidget {
           title != null ? title : "",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.body2.copyWith(color: CustomTheme.of(context).onSurface, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.body2.copyWith(
+              color: CustomTheme.of(context).onSurface,
+              fontWeight: FontWeight.bold),
         ));
   }
 
@@ -272,7 +304,8 @@ class AvatarListItem extends StatelessWidget {
           subTitle != null ? subTitle : "",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.body1.copyWith(color: CustomTheme.of(context).onSurface.withOpacity(half)),
+          style: Theme.of(context).textTheme.body1.copyWith(
+              color: CustomTheme.of(context).onSurface.withOpacity(half)),
         ));
   }
 }

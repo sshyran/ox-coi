@@ -43,7 +43,6 @@
 import 'package:delta_chat_core/delta_chat_core.dart' as Core;
 import 'package:flutter/material.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
-import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
 import 'package:ox_coi/src/chat/chat.dart';
 import 'package:ox_coi/src/contact/contact_details.dart';
 import 'package:ox_coi/src/contact/contact_item_bloc.dart';
@@ -111,7 +110,7 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
 
   @override
   Widget build(BuildContext context) {
-    return getAvatarItemBlocBuilder(bloc: _contactBloc, onContactTapped: goToProfile, moreButton: widget.showMoreButton ? getMoreButton() : null);
+    return getAvatarItemBlocBuilder(bloc: _contactBloc, onContactTapped: goToProfile, moreButton: widget.showMoreButton ? getMoreButton() : null, showHeaderText: false);
   }
 
   goToProfile(String title, String subtitle) {
@@ -136,9 +135,10 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
             value: choice,
             child: Row(
                   children: <Widget>[
-                    AdaptiveIcon(icon: choice.iconSource),
+                    AdaptiveIcon(icon: choice.iconSource, color: choice.color,),
                     Padding(padding: EdgeInsets.only(right: iconTextPadding)),
-                    Text(choice.title),
+                    Text(choice.title,
+                    style: TextStyle(color: choice.color),)
                   ],
                 ),
           );
@@ -166,7 +166,7 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
 List<GroupParticipantMenu> participantChoices = <GroupParticipantMenu>[
   GroupParticipantMenu(title: L10n.get(L.groupParticipantActionInfo), iconSource: IconSource.info, action: GroupParticipantActions.info),
   GroupParticipantMenu(title: L10n.get(L.groupParticipantActionSendMessage), iconSource: IconSource.chat, action: GroupParticipantActions.sendMessage),
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionRemove), iconSource: IconSource.delete, action: GroupParticipantActions.remove),
+  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionRemove), iconSource: IconSource.delete, color: Colors.red, action: GroupParticipantActions.remove),
 ];
 
 List<GroupParticipantMenu> meChoices = <GroupParticipantMenu>[
@@ -177,7 +177,8 @@ List<GroupParticipantMenu> meChoices = <GroupParticipantMenu>[
 class GroupParticipantMenu {
   String title;
   IconSource iconSource;
+  Color color;
   GroupParticipantActions action;
 
-  GroupParticipantMenu({this.title, this.iconSource, this.action});
+  GroupParticipantMenu({this.title, this.iconSource, this.color, this.action});
 }
