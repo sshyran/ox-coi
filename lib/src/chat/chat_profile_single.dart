@@ -163,24 +163,26 @@ class _ChatProfileOneToOneState extends State<ChatProfileOneToOne> {
                 ListGroupHeader(
                   text: L10n.get(L.settingP),
                 ),
-              SettingsItem(
-                icon: IconSource.notifications,
-                text: L10n.get(L.settingItemNotificationsTitle),
-                iconBackground: CustomTheme.of(context).notificationIcon,
-                onTap: () =>
-                    _settingsItemTapped(context, SettingsItemName.notification),
-              ),
+              if (!widget.isSelfTalk)
+                SettingsItem(
+                  icon: IconSource.notifications,
+                  text: L10n.get(L.settingItemNotificationsTitle),
+                  iconBackground: CustomTheme.of(context).notificationIcon,
+                  onTap: () =>
+                      _settingsItemTapped(context, SettingsItemName.notification),
+                ),
               if (!isInvite())
                 ListGroupHeader(
                   text: "",
                 ),
-              SettingsItem(
-                icon: IconSource.delete,
-                text: L10n.get(L.chatDeleteP),
-                textColor: CustomTheme.of(context).error,
-                iconBackground: CustomTheme.of(context).blockIcon,
-                onTap: () => _deleteChat(),
-              ),
+              if (!isInvite())
+                SettingsItem(
+                  icon: IconSource.delete,
+                  text: L10n.get(L.chatDeleteP),
+                  textColor: CustomTheme.of(context).error,
+                  iconBackground: CustomTheme.of(context).blockIcon,
+                  onTap: () => _deleteChat(),
+                ),
             ],
           ),
         ),
