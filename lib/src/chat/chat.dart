@@ -119,6 +119,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
   bool _isComposingText = false;
   bool _isLocked = false;
   bool _isStopped = false;
+  bool _isPlaying = false;
   String _composingAudioTimer;
   List<double> _dbPeakList;
   String _filePath = "";
@@ -336,12 +337,15 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
                   visible: _composingAudioTimer != null,
                   child: Positioned(
                     bottom: 72.0,
-                    right: 16.0,
-                    child: AdaptiveSuperellipseIcon(
-                      icon: IconSource.send,
-                      iconSize: 20.0,
-                      color: CustomTheme.of(context).accent,
-                      iconColor: CustomTheme.of(context).white,
+                    right: 8.0,
+                    child: AdaptiveIconButton(
+                      icon: AdaptiveSuperellipseIcon(
+                        icon: IconSource.send,
+                        iconSize: 20.0,
+                        color: CustomTheme.of(context).accent,
+                        iconColor: CustomTheme.of(context).white,
+                      ),
+                      onPressed: null,
                     ),
                   ),
                 )
@@ -556,7 +560,8 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       onRecordAudioStopped: _onAudioRecordingStopped,
       onRecordAudioStoppedLongPress: _onAudioRecordingStoppedLongPress,
       onRecordAudioLocked: _onAudioRecordingLocked,
-      onAudioRecordingReplay: _onAudioRecordingReplay,
+      onAudioPlaying: _onAudioPlaying,
+      onAudioPlayingStopped: _onAudioPlayingStopped,
       onRecordVideoPressed: _onRecordVideoPressed,
       onCaptureImagePressed: _onCaptureImagePressed,
       type: _getComposerType(),
@@ -564,6 +569,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       text: _composingAudioTimer,
       isLocked: _isLocked,
       isStopped: _isStopped,
+      isPlaying: _isPlaying,
     ));
     return IconTheme(
       data: IconThemeData(color: CustomTheme.of(context).accent),
@@ -685,8 +691,9 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     double dxDifference = startLongPressDx - details.localPosition.dx;
     double dyDifference = startLongPressDy - details.localPosition.dy;
     if (dyDifference > 50.0) {
+      _chatComposerBloc.add(StopAudioRecording());
       //TODO: Add send method
-    } else if(dxDifference > 45.0) {
+    } else if (dxDifference > 45.0) {
       setState(() {
         _isLocked = true;
       });
@@ -705,8 +712,18 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
     });
   }
 
-  _onAudioRecordingReplay(){
+  _onAudioPlaying() {
+    setState(() {
+      _isPlaying = true;
+    });
+    _chatComposerBloc.add(ReplayAudio());
+  }
 
+  _onAudioPlayingStopped() {
+    setState(() {
+      _isPlaying = false;
+    });
+    _chatComposerBloc.add(ReplayAudio());
   }
 
   _onAudioRecordingAbort() {
@@ -850,7 +867,7 @@ class MessageList extends StatelessWidget {
           if (state.messageIds.length > 0) {
             return ListView.custom(
               controller: scrollController,
-              padding: new EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(messageListPadding, messageListPadding, messageListPadding, composerMessagePadding),
               reverse: true,
               childrenDelegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {

@@ -55,6 +55,7 @@ import 'package:permission_handler/permission_handler.dart';
 class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   StreamSubscription<RecordStatus> _recorderSubscription;
   StreamSubscription<double> _recorderDBPeakSubscription;
+  StreamSubscription<PlayStatus> _playerSubscription;
   FlutterSound _flutterSound = FlutterSound();
   String _audioPath;
   bool _removeFirstEntry = false;
@@ -104,6 +105,8 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       if (!_wasImageOrVideoRecordingCanceled(event.filePath, event.type)) {
         yield ChatComposerRecordingImageOrVideoStopped(filePath: event.filePath, type: event.type);
       }
+    } else if(event is ReplayAudio){
+      _replayAudio();
     }
   }
 
@@ -122,6 +125,20 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       String timer = getTimerFromTimestamp(e.currentPosition.toInt());
       add(UpdateAudioRecording(timer: timer));
     });
+  }
+
+  _replayAudio() async {
+    if(!_flutterSound.isPlaying) {
+      await _flutterSound.startPlayer(_audioPath);
+      _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data){
+        print("[ChatComposerBloc._replayAudio] fhaar - ${data.duration}, ${data.currentPosition}");
+      });
+    }else{
+      await _flutterSound.stopPlayer();
+      if(_playerSubscription != null){
+        _playerSubscription.cancel();
+      }
+    }
   }
 
   Stream<ChatComposerState> stopAudioRecorder({bool isAborted = false}) async* {

@@ -82,6 +82,8 @@ class StopImageOrVideoRecording extends ChatComposerEvent {
   StopImageOrVideoRecording({@required this.type, @required this.filePath});
 }
 
+class ReplayAudio extends ChatComposerEvent{}
+
 enum ChatComposerStateError {
   missingMicrophonePermission,
   missingCameraPermission,

@@ -152,13 +152,16 @@ mixin ChatComposer {
     @required Function onRecordAudioStopped,
     @required Function onRecordAudioStoppedLongPress,
     @required Function onRecordAudioLocked,
-    @required Function onAudioRecordingReplay,
+    @required Function onAudioPlaying,
+    @required Function onAudioPlayingStopped,
+    @required Function onAudioRecording,
     @required Function onRecordVideoPressed,
     @required Function onCaptureImagePressed,
     @required BuildContext context,
     @required String text,
     @required bool isLocked,
     @required bool isStopped,
+    @required bool isPlaying,
   }) {
     List<Widget> widgets = List();
     if (type != ComposerModeType.isComposing) {
@@ -210,56 +213,81 @@ mixin ChatComposer {
       widgets.add(GestureDetector(
         onLongPressStart: onRecordAudioPressed,
         onLongPressEnd: onRecordAudioStoppedLongPress,
-        child: Row(
-          children: <Widget>[
-            Visibility(
-              visible: type == ComposerModeType.isVoiceRecording && !isStopped,
-              child: AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: isLocked ? IconSource.lock : IconSource.openLock,
-                  color: Colors.transparent,
-                  iconColor: CustomTheme.of(context).accent,
-                  iconSize: 16.0,
-                ),
-                onPressed: onRecordAudioLocked,
-              ),
-            ),
-            Visibility(
-              visible: type == ComposerModeType.compose,
-              child: AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: IconSource.mic,
-                  color: CustomTheme.of(context).onSurface.withOpacity(barely),
-                  iconColor: CustomTheme.of(context).accent,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: type == ComposerModeType.isVoiceRecording && !isStopped,
-              child: AdaptiveIconButton(
-                icon: AdaptiveSuperellipseIcon(
-                  icon: IconSource.stopPlay,
-                  color: CustomTheme.of(context).accent,
-                  iconColor: CustomTheme.of(context).white,
-                ),
-                onPressed: onRecordAudioStopped,
-              ),
-            ),
-            Visibility(
-              visible: type == ComposerModeType.isVoiceRecording && isStopped,
-              child: Container(
-                padding: EdgeInsets.only(left: 50.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isLocked || isStopped || type == ComposerModeType.compose
+                ? Colors.transparent
+                : CustomTheme.of(context).onSurface.withOpacity(barely),
+            borderRadius: BorderRadius.all(Radius.circular(30.0)),
+          ),
+          child: Row(
+            children: <Widget>[
+              Visibility(
+                visible: type == ComposerModeType.isVoiceRecording && !isStopped,
                 child: AdaptiveIconButton(
                   icon: AdaptiveSuperellipseIcon(
-                    icon: IconSource.play,
+                    icon: isLocked ? IconSource.lock : IconSource.openLock,
+                    color: Colors.transparent,
+                    iconColor: CustomTheme.of(context).accent,
+                    iconSize: 16.0,
+                  ),
+                  onPressed: onRecordAudioLocked,
+                ),
+              ),
+              Visibility(
+                visible: type == ComposerModeType.compose,
+                child: AdaptiveIconButton(
+                  icon: AdaptiveSuperellipseIcon(
+                    icon: IconSource.mic,
+                    color: CustomTheme.of(context).onSurface.withOpacity(barely),
+                    iconColor: CustomTheme.of(context).accent,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: type == ComposerModeType.isVoiceRecording && !isStopped,
+                child: AdaptiveIconButton(
+                  icon: AdaptiveSuperellipseIcon(
+                    icon: IconSource.stopPlay,
                     color: CustomTheme.of(context).accent,
                     iconColor: CustomTheme.of(context).white,
                   ),
-                  onPressed: onAudioRecordingReplay,
+                  onPressed: onRecordAudioStopped,
                 ),
               ),
-            )
-          ],
+              Visibility(
+                visible: type == ComposerModeType.isVoiceRecording && isStopped,
+                child: Container(
+                    padding: EdgeInsets.only(left: 50.0),
+                    child: Row(
+                      children: <Widget>[
+                        Visibility(
+                          visible: !isPlaying,
+                          child: AdaptiveIconButton(
+                            icon: AdaptiveSuperellipseIcon(
+                              icon: IconSource.play,
+                              color: CustomTheme.of(context).accent,
+                              iconColor: CustomTheme.of(context).white,
+                            ),
+                            onPressed: onAudioPlaying,
+                          ),
+                        ),
+                        Visibility(
+                          visible: isPlaying,
+                          child: AdaptiveIconButton(
+                            icon: AdaptiveSuperellipseIcon(
+                              icon: IconSource.stopPlay,
+                              color: CustomTheme.of(context).accent,
+                              iconColor: CustomTheme.of(context).white,
+                            ),
+                            onPressed: onAudioPlayingStopped,
+                          ),
+                        )
+                      ],
+                    )),
+              )
+            ],
+          ),
         ),
       ));
     } else {
