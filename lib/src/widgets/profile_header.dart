@@ -56,6 +56,7 @@ import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/ui/text_styles.dart';
 import 'package:ox_coi/src/utils/clipboard.dart';
+import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:ox_coi/src/widgets/avatar.dart';
 import 'package:ox_coi/src/widgets/placeholder_text.dart';
 
@@ -125,13 +126,13 @@ class ProfileHeader extends StatelessWidget {
                       padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                       child: ProfileData.of(context).withPlaceholder
                           ? PlaceholderText(
-                        text: ProfileData.of(context).text,
-                        style: getProfileHeaderTextStyle(context),
-                        align: TextAlign.center,
-                        placeholderText: ProfileData.of(context).placeholderText,
-                        placeholderStyle: getProfileHeaderPlaceholderTextStyle(context),
-                        placeHolderAlign: TextAlign.center,
-                      )
+                              text: ProfileData.of(context).text,
+                              style: getProfileHeaderTextStyle(context),
+                              align: TextAlign.center,
+                              placeholderText: ProfileData.of(context).placeholderText,
+                              placeholderStyle: getProfileHeaderPlaceholderTextStyle(context),
+                              placeHolderAlign: TextAlign.center,
+                            )
                           : ProfileHeaderText(),
                     ),
                   ),
@@ -216,9 +217,9 @@ class ProfileAvatar extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-
           Visibility(
-            visible: ProfileData.of(context).imageActionCallback != null && (ProfileData.of(context).avatarPath == null || ProfileData.of(context).avatarPath.isEmpty),
+            visible: ProfileData.of(context).imageActionCallback != null &&
+                (ProfileData.of(context).avatarPath == null || ProfileData.of(context).avatarPath.isEmpty),
             child: AdaptiveIcon(
               icon: IconSource.camera,
               color: ProfileData.of(context).showWhiteImageIcon ? CustomTheme.of(context).white : CustomTheme.of(context).accent,
@@ -329,6 +330,48 @@ class ProfileCopyableHeaderText extends StatelessWidget {
           Padding(padding: EdgeInsets.all(iconTextPadding)),
           AdaptiveIcon(icon: IconSource.contentCopy),
         ],
+      ),
+    );
+  }
+}
+
+class EditableProfileHeader extends StatelessWidget {
+  final Function imageChangedCallback;
+  final String avatar;
+  final TextEditingController nameController;
+
+  const EditableProfileHeader({Key key, @required this.imageChangedCallback, @required this.avatar, @required this.nameController}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.only(top: editUserAvatarVerticalPadding)),
+            Align(
+                alignment: Alignment.center,
+                child: ProfileData(
+                  imageBackgroundColor: CustomTheme.of(context).onBackground.withOpacity(barely),
+                  imageActionCallback: imageChangedCallback,
+                  avatarPath: avatar,
+                  child: ProfileAvatar(),
+                )),
+            Padding(
+              padding: EdgeInsets.only(left: listItemPaddingBig, right: listItemPaddingBig),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                      key: Key(keyUserSettingsUserSettingsUsernameLabel),
+                      maxLines: 1,
+                      controller: nameController,
+                      decoration: InputDecoration(labelText: L10n.get(L.username))),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

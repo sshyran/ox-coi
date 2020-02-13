@@ -51,9 +51,6 @@ import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/navigation/navigatable.dart';
 import 'package:ox_coi/src/navigation/navigation.dart';
-import 'package:ox_coi/src/ui/color.dart';
-import 'package:ox_coi/src/ui/custom_theme.dart';
-import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/user/user_change_bloc.dart';
 import 'package:ox_coi/src/user/user_change_event_state.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
@@ -122,46 +119,17 @@ class _UserSettingsState extends State<UserSettings> {
         bloc: _userChangeBloc,
         builder: (context, state) {
           if (state is UserChangeStateSuccess) {
-            return buildEditUserDataView(state.config);
+            return EditableProfileHeader(
+              nameController: _usernameController,
+              avatar: _avatar,
+              imageChangedCallback: _setAvatar,
+            );
           } else if (state is UserChangeStateFailure) {
             return new Text(state.error);
           } else {
             return new Container();
           }
         });
-  }
-
-  Widget buildEditUserDataView(Config config) {
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: editUserAvatarVerticalPadding)),
-            Align(
-                alignment: Alignment.center,
-                child: ProfileData(
-                  imageBackgroundColor: CustomTheme.of(context).onBackground.withOpacity(barely),
-                  imageActionCallback: _setAvatar,
-                  avatarPath: _avatar,
-                  child: ProfileAvatar(),
-                )),
-            Padding(
-              padding: EdgeInsets.only(left: listItemPaddingBig, right: listItemPaddingBig),
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                      key: Key(keyUserSettingsUserSettingsUsernameLabel),
-                      maxLines: 1,
-                      controller: _usernameController,
-                      decoration: InputDecoration(labelText: L10n.get(L.username))),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   _setAvatar(String avatarPath) {
