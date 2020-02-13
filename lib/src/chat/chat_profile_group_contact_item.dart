@@ -110,7 +110,8 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
 
   @override
   Widget build(BuildContext context) {
-    return getAvatarItemBlocBuilder(bloc: _contactBloc, onContactTapped: goToProfile, moreButton: widget.showMoreButton ? getMoreButton() : null, showHeaderText: false);
+    return getAvatarItemBlocBuilder(
+        bloc: _contactBloc, onContactTapped: goToProfile, moreButton: widget.showMoreButton ? getMoreButton() : null, showHeaderText: false);
   }
 
   goToProfile(String title, String subtitle) {
@@ -134,13 +135,20 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
           return PopupMenuItem<GroupParticipantMenu>(
             value: choice,
             child: Row(
-                  children: <Widget>[
-                    AdaptiveIcon(icon: choice.iconSource, color: choice.color,),
-                    Padding(padding: EdgeInsets.only(right: iconTextPadding)),
-                    Text(choice.title,
-                    style: TextStyle(color: choice.color),)
-                  ],
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: iconTextPadding),
+                  child: AdaptiveIcon(
+                    icon: choice.iconSource,
+                    color: choice.color,
+                  ),
                 ),
+                Text(
+                  choice.title,
+                  style: TextStyle(color: choice.color),
+                )
+              ],
+            ),
           );
         }).toList();
       },
@@ -164,21 +172,42 @@ class _ChatProfileGroupContactItemState extends State<ChatProfileGroupContactIte
 }
 
 List<GroupParticipantMenu> participantChoices = <GroupParticipantMenu>[
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionInfo), iconSource: IconSource.info, action: GroupParticipantActions.info),
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionSendMessage), iconSource: IconSource.chat, action: GroupParticipantActions.sendMessage),
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionRemove), iconSource: IconSource.delete, color: Colors.red, action: GroupParticipantActions.remove),
+  GroupParticipantMenu(
+    title: L10n.get(L.groupParticipantActionInfo),
+    iconSource: IconSource.info,
+    action: GroupParticipantActions.info,
+  ),
+  GroupParticipantMenu(
+    title: L10n.get(L.groupParticipantActionSendMessage),
+    iconSource: IconSource.chat,
+    action: GroupParticipantActions.sendMessage,
+  ),
+  GroupParticipantMenu(
+    title: L10n.get(L.groupParticipantActionRemove),
+    iconSource: IconSource.delete,
+    color: Colors.red,
+    action: GroupParticipantActions.remove,
+  ),
 ];
 
 List<GroupParticipantMenu> meChoices = <GroupParticipantMenu>[
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionInfo), iconSource: IconSource.info, action: GroupParticipantActions.info),
-  GroupParticipantMenu(title: L10n.get(L.groupParticipantActionSendMessage), iconSource: IconSource.chat, action: GroupParticipantActions.sendMessage),
+  GroupParticipantMenu(
+    title: L10n.get(L.groupParticipantActionInfo),
+    iconSource: IconSource.info,
+    action: GroupParticipantActions.info,
+  ),
+  GroupParticipantMenu(
+    title: L10n.get(L.groupParticipantActionSendMessage),
+    iconSource: IconSource.chat,
+    action: GroupParticipantActions.sendMessage,
+  ),
 ];
 
 class GroupParticipantMenu {
-  String title;
-  IconSource iconSource;
-  Color color;
-  GroupParticipantActions action;
+  final String title;
+  final IconSource iconSource;
+  final Color color;
+  final GroupParticipantActions action;
 
-  GroupParticipantMenu({this.title, this.iconSource, this.color, this.action});
+  GroupParticipantMenu({@required this.title, @required this.action, this.iconSource, this.color});
 }
