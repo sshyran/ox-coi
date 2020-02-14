@@ -278,6 +278,7 @@ class _ProfileState extends State<UserProfile> {
                       icon: IconSource.logout,
                       text: L10n.get(L.logoutTitle),
                       iconBackground: CustomTheme.of(context).logoutIcon,
+                      showChevron: false,
                       onTap: () => _settingsItemTapped(context, SettingsItemName.logout),
                     ),
                     if (!isRelease())
@@ -359,20 +360,19 @@ class _ProfileState extends State<UserProfile> {
   }
 
   void _showLogoutDialog({BuildContext context}) {
+    // ignore: close_sinks
+    final mainBloc = BlocProvider.of<MainBloc>(context);
+
     showConfirmationDialog(
       context: context,
       title: L10n.get(L.logoutTitle),
       content: L10n.get(L.logoutConfirmationText),
       positiveButton: L10n.get(L.logoutTitle),
-      positiveAction: _performLogout,
+      positiveAction: () => {
+        mainBloc.add(Logout())
+      },
       navigatable: Navigatable(Type.logout),
     );
-  }
-
-  Future<void> _performLogout() async {
-    // ignore: close_sinks
-    final mainBloc = BlocProvider.of<MainBloc>(context);
-    mainBloc.add(Logout());
   }
 
   void _changeTheme() async {

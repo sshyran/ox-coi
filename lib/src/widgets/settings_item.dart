@@ -74,6 +74,7 @@ class SettingsItem extends StatelessWidget {
   final String text;
   final Function onTap;
   final bool showSwitch;
+  final bool showChevron;
   final Function onSwitchChanged;
   final Color textColor;
 
@@ -84,6 +85,7 @@ class SettingsItem extends StatelessWidget {
     @required this.text,
     @required this.onTap,
     this.showSwitch = false,
+    this.showChevron = true,
     this.onSwitchChanged,
     this.textColor,
   }) : super(key: key);
@@ -115,7 +117,7 @@ class SettingsItem extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: Platform.isIOS && !showSwitch,
+                visible: Platform.isIOS && !showSwitch && showChevron,
                 child: AdaptiveIcon(
                   icon: IconSource.iosChevron,
                   color: CustomTheme.of(context).onSurface,
