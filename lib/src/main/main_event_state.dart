@@ -68,6 +68,8 @@ class MainStateInitial extends MainState {}
 
 class MainStateLoading extends MainState {}
 
+class MainStateLogout extends MainState {}
+
 class MainStateSuccess extends MainState {
   bool configured;
   bool hasAuthenticationError;

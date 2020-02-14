@@ -127,7 +127,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
 
     } else if (event is Logout) {
-      _logout();
+      yield MainStateLogout();
     }
 
     if (event is UserVisibleErrorEncountered) {
@@ -143,11 +143,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     final core = Context();
     core.close();
 
-    _core.reset(dbName: dbName);
+    _core.reset();
     _core = null;
     _core = DeltaChatCore();
-
-    add(PrepareApp());
   }
 
   Future<void> _setupBlocs() async {

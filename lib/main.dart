@@ -172,6 +172,8 @@ class _OxCoiState extends State<OxCoi> {
           } else {
             child = Login(success: _loginSuccess);
           }
+        } else if (state is MainStateLogout) {
+          child = Login(success: _loginSuccess);
         } else {
           child = Splash();
         }
