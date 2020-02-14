@@ -118,12 +118,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
 
     } else if (event is AppLoaded) {
-      final bool configured = await _context.isConfigured();
+      final bool configured = event.isConfigured ?? await _context.isConfigured();
       if (configured) {
         await _setupLoggedInAppState();
       }
 
-      final bool hasAuthenticationError = await _checkForAuthenticationError();
+      final bool hasAuthenticationError = event.hasAuthenticationError ?? await _checkForAuthenticationError();
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
 
     } else if (event is Logout) {
@@ -143,7 +143,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     final core = Context();
     core.close();
 
-    _core.reset();
+//    _core.reset();
     _core = null;
     _core = DeltaChatCore();
   }
