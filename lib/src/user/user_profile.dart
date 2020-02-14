@@ -263,12 +263,14 @@ class _ProfileState extends State<UserProfile> {
                       icon: IconSource.feedback,
                       text: L10n.get(L.settingItemFeedbackTitle),
                       iconBackground: CustomTheme.of(context).feedbackIcon,
+                      showChevron: false,
                       onTap: () => _settingsItemTapped(context, SettingsItemName.feedback),
                     ),
                     SettingsItem(
                       icon: IconSource.bugReport,
                       text: L10n.get(L.settingItemBugReportTitle),
                       iconBackground: CustomTheme.of(context).bugReportIcon,
+                      showChevron: false,
                       onTap: () => _settingsItemTapped(context, SettingsItemName.bugReport),
                     ),
                     ListGroupHeader(
