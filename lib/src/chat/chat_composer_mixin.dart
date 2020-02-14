@@ -106,14 +106,26 @@ mixin ChatComposer {
       @required ComposerModeType type,
       @required TextEditingController textController,
       @required Function onTextChanged,
+      @required bool isPlaying,
+      int replayTime = 0,
       List<double> dbPeakList}) {
-    return Flexible(
-      child: ComposerModeType.isVoiceRecording == type
-          ? VoicePainter(
-              dbPeakList: dbPeakList,
-            )
-          : getInputTextField(textController, onTextChanged, context),
-    );
+
+    Widget child;
+    if (ComposerModeType.isVoiceRecording == type) {
+      if (!isPlaying) {
+        child = VoicePainter(
+          dbPeakList: dbPeakList,
+          color: CustomTheme.of(context).onSurface,
+          withChild: true,
+        );
+      } else {
+        child = AudioPlayback(dbPeakList: dbPeakList, replayTime: replayTime);
+      }
+    } else {
+      child = getInputTextField(textController, onTextChanged, context);
+    }
+
+    return Flexible(child: child);
   }
 
   Widget getInputTextField(TextEditingController textController, Function onTextChanged, BuildContext context) {
@@ -154,7 +166,6 @@ mixin ChatComposer {
     @required Function onRecordAudioLocked,
     @required Function onAudioPlaying,
     @required Function onAudioPlayingStopped,
-    @required Function onAudioRecording,
     @required Function onRecordVideoPressed,
     @required Function onCaptureImagePressed,
     @required BuildContext context,
@@ -329,5 +340,32 @@ mixin ChatComposer {
               ))
     */
     return widgets;
+  }
+}
+
+class AudioPlayback extends StatelessWidget {
+  final List<double> dbPeakList;
+  final int replayTime;
+
+  AudioPlayback({@required this.dbPeakList, @required this.replayTime});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          VoicePainter(
+            dbPeakList: dbPeakList,
+            color: CustomTheme.of(context).onSurface,
+            withChild: true,
+          ),
+          VoicePainter(
+            dbPeakList: dbPeakList.getRange(0, replayTime).toList(),
+            color: CustomTheme.of(context).accent,
+            withChild: false,
+          ),
+        ],
+      ),
+    );
   }
 }

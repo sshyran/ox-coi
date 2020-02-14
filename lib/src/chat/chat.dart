@@ -122,6 +122,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
   bool _isPlaying = false;
   String _composingAudioTimer;
   List<double> _dbPeakList;
+  int _replayTime = 0;
   String _filePath = "";
   int _knownType;
   FileType _selectedFileType;
@@ -226,6 +227,16 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
         _dbPeakList = null;
         _isStopped = false;
         _isLocked = false;
+      });
+    } else if (state is ChatComposerReplayStopped) {
+      setState(() {
+        _isPlaying = false;
+        _replayTime = 0;
+      });
+    } else if (state is ChatComposerReplayTimeUpdated) {
+      setState(() {
+        _dbPeakList = state.dbPeakList;
+        _replayTime = state.replayTime;
       });
     } else if (state is ChatComposerRecordingImageOrVideoStopped) {
       if (state.type != 0 && state.filePath != null) {
@@ -338,14 +349,20 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
                   child: Positioned(
                     bottom: 72.0,
                     right: 8.0,
-                    child: AdaptiveIconButton(
-                      icon: AdaptiveSuperellipseIcon(
-                        icon: IconSource.send,
-                        iconSize: 20.0,
-                        color: CustomTheme.of(context).accent,
-                        iconColor: CustomTheme.of(context).white,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: CustomTheme.of(context).black.withOpacity(fade),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       ),
-                      onPressed: null,
+                      child: AdaptiveIconButton(
+                        icon: AdaptiveSuperellipseIcon(
+                          icon: IconSource.send,
+                          iconSize: 20.0,
+                          color: CustomTheme.of(context).accent,
+                          iconColor: CustomTheme.of(context).white,
+                        ),
+                        onPressed: null,
+                      ),
                     ),
                   ),
                 )
@@ -553,6 +570,8 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       textController: _textController,
       onTextChanged: _onInputTextChanged,
       dbPeakList: _dbPeakList,
+      replayTime: _replayTime,
+      isPlaying: _isPlaying,
     ));
     widgets.addAll(buildRightComposerPart(
       context: context,
@@ -721,6 +740,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
 
   _onAudioPlayingStopped() {
     setState(() {
+      _replayTime = 0;
       _isPlaying = false;
     });
     _chatComposerBloc.add(ReplayAudio());

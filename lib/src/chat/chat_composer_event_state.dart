@@ -84,6 +84,14 @@ class StopImageOrVideoRecording extends ChatComposerEvent {
 
 class ReplayAudio extends ChatComposerEvent{}
 
+class ReplayAudioTimeUpdate extends ChatComposerEvent{
+  final int replayTime;
+
+  ReplayAudioTimeUpdate({@required this.replayTime});
+}
+
+class ReplayAudioStopped extends ChatComposerEvent{}
+
 enum ChatComposerStateError {
   missingMicrophonePermission,
   missingCameraPermission,
@@ -117,6 +125,15 @@ class ChatComposerRecordingFailed extends ChatComposerState {
   ChatComposerStateError error;
 
   ChatComposerRecordingFailed({@required this.error});
+}
+
+class ChatComposerReplayStopped extends ChatComposerState{}
+
+class ChatComposerReplayTimeUpdated extends ChatComposerState{
+  final List<double> dbPeakList;
+  final int replayTime;
+
+  ChatComposerReplayTimeUpdated({@required this.dbPeakList, @required this.replayTime});
 }
 
 class ChatComposerRecordingImageOrVideoStopped extends ChatComposerState {

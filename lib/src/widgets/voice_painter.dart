@@ -49,8 +49,10 @@ import 'package:ox_coi/src/widgets/custom_painters.dart';
 
 class VoicePainter extends StatefulWidget {
   final List<double> dbPeakList;
+  final Color color;
+  final bool withChild;
 
-  VoicePainter({@required this.dbPeakList});
+  VoicePainter({@required this.dbPeakList, @required this.color, @required this.withChild});
 
   @override
   _VoicePainterState createState() => _VoicePainterState();
@@ -63,14 +65,14 @@ class _VoicePainterState extends State<VoicePainter> {
     return LayoutBuilder(
       builder: (context, constraints){
         return CustomPaint(
-          child: Container(
+          child: widget.withChild ? Container(
             width: constraints.maxWidth,
             child: CustomPaint(
-              painter: HorizontalLinePainter(color: CustomTheme.of(context).onSurface),
+              painter: HorizontalLinePainter(color: widget.color),
             ),
-          ),
+          ) : Container(),
           size: Size(constraints.maxWidth, 0.0),
-          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback, color: CustomTheme.of(context).onSurface),
+          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback, color: widget.color),
         );
       }
     );

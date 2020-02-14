@@ -107,12 +107,17 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       }
     } else if(event is ReplayAudio){
       _replayAudio();
+    } else if(event is ReplayAudioStopped){
+      yield ChatComposerReplayStopped();
+    } else if(event is ReplayAudioTimeUpdate){
+      yield ChatComposerReplayTimeUpdated(dbPeakList: _dbPeakList, replayTime: event.replayTime);
     }
   }
 
   Future<void> startAudioRecorder() async {
     _dbPeakList = List<double>();
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
+    _flutterSound.setDbLevelEnabled(true);
     _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
       _dbPeakList.add((newDBPeak / 4));
@@ -129,14 +134,24 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
 
   _replayAudio() async {
     if(!_flutterSound.isPlaying) {
+      int replayTime = 0;
       await _flutterSound.startPlayer(_audioPath);
       _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data){
-        print("[ChatComposerBloc._replayAudio] fhaar - ${data.duration}, ${data.currentPosition}");
+        if(data?.duration != data?.currentPosition){
+          int currentTimer = (data.currentPosition / 1000).round();
+          if(currentTimer > replayTime) {
+            replayTime = currentTimer;
+            add(ReplayAudioTimeUpdate(replayTime: replayTime));
+          }
+        }else{
+          add(ReplayAudioStopped());
+        }
       });
     }else{
       await _flutterSound.stopPlayer();
       if(_playerSubscription != null){
         _playerSubscription.cancel();
+        _playerSubscription = null;
       }
     }
   }
@@ -148,9 +163,11 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
 
       if (_recorderSubscription != null) {
         _recorderSubscription.cancel();
+        _recorderSubscription = null;
       }
       if (_recorderDBPeakSubscription != null) {
         _recorderDBPeakSubscription.cancel();
+        _recorderDBPeakSubscription = null;
       }
     } catch (err) {
       print('stopRecorder error: $err');
