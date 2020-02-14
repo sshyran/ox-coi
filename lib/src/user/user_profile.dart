@@ -58,6 +58,7 @@ import 'package:ox_coi/src/main/main_event_state.dart';
 import 'package:ox_coi/src/main/root_child.dart';
 import 'package:ox_coi/src/navigation/navigatable.dart';
 import 'package:ox_coi/src/navigation/navigation.dart';
+import 'package:ox_coi/src/platform/app_information.dart';
 import 'package:ox_coi/src/platform/preferences.dart';
 import 'package:ox_coi/src/qr/qr.dart';
 import 'package:ox_coi/src/settings/settings_signature.dart';
@@ -154,13 +155,8 @@ class _ProfileState extends State<UserProfile> {
 
   Widget buildProfileView(Config config) {
     _avatarPath = config.avatarPath;
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: viewportConstraints.maxHeight,
-            ),
+          
             child: IntrinsicHeight(
               child: Container(
                 color: CustomTheme.of(context).background,
@@ -284,14 +280,20 @@ class _ProfileState extends State<UserProfile> {
                       iconBackground: CustomTheme.of(context).logoutIcon,
                       onTap: () => _settingsItemTapped(context, SettingsItemName.logout),
                     ),
+                    if (!isRelease())
+                      SettingsItem(
+                        icon: IconSource.bugReport,
+                        text: L10n.get(L.debug),
+                        iconBackground: CustomTheme.of(context).bugReportIcon,
+                        onTap: () => _settingsItemTapped(context, SettingsItemName.debug),
+                      ),
                   ],
                 ),
               ),
             ),
-          ),
         );
-      },
-    );
+      
+    
   }
 
   _settingsItemTapped(BuildContext context, SettingsItemName settingsItemName) {
@@ -349,6 +351,9 @@ class _ProfileState extends State<UserProfile> {
         break;
       case SettingsItemName.logout:
         _showLogoutDialog(context: context);
+        break;
+      case SettingsItemName.debug:
+        navigation.pushNamed(context, Navigation.settingsDebug);
         break;
     }
   }
