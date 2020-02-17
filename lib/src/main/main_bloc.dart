@@ -137,17 +137,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     }
   }
 
-  void _logout() {
-    print("[phranck] ** LOGOUT! **");
-
-    final core = Context();
-    core.close();
-
-//    _core.reset();
-    _core = null;
-    _core = DeltaChatCore();
-  }
-
   Future<void> _setupBlocs() async {
     errorBloc.add(SetupListeners());
   }

@@ -40,6 +40,7 @@
  * for more details.
  */
 
+import 'package:delta_chat_core/delta_chat_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -160,9 +161,15 @@ class _OxCoiState extends State<OxCoi> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MainBloc, MainState>(
-      listener: (context, state){
-        if(state is MainStateLogout){
+    return BlocListener<MainBloc, MainState> (
+      listener: (context, state) {
+        if (state is MainStateLogout) {
+          var dcc = DeltaChatCore();
+          dcc.reset();
+
+          final core = Context();
+          core.close();
+
           _mainBloc.add(AppLoaded(isConfigured: false, hasAuthenticationError: false));
         }
       },
@@ -196,4 +203,5 @@ class _OxCoiState extends State<OxCoi> {
     _navigation.popUntilRoot(context);
     _mainBloc.add(AppLoaded());
   }
+
 }

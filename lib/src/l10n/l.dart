@@ -253,7 +253,7 @@ class L {
   static final loginServerAddresses = _translationKey("Server addresses");
   static final loginManualSetupRequired = _translationKey("We could not determine all settings automatically.");
 
-  static final logoutTitle = _translationKey("Logout...");
+  static final logoutTitle = _translationKey("Logout");
   static final logoutConfirmationText = _translationKey("Do you really want to logout?");
 
   static final passwordChangedTitle = _translationKey("Password changed");
