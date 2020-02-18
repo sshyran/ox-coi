@@ -52,12 +52,7 @@ class PrepareApp extends MainEvent {
 
 class LoadApp extends MainEvent {}
 
-class AppLoaded extends MainEvent {
-  final bool isConfigured;
-  final bool hasAuthenticationError;
-
-  AppLoaded({this.isConfigured, this.hasAuthenticationError});
-}
+class AppLoaded extends MainEvent {}
 
 class Logout extends MainEvent {}
 

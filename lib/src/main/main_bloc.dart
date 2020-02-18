@@ -68,18 +68,21 @@ import 'package:ox_coi/src/utils/constants.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
   final _logger = Logger("main_bloc");
-  DeltaChatCore _core = DeltaChatCore();
-  final _context = Context();
   final _notificationManager = NotificationManager();
   final _pushManager = PushManager();
   final _localNotificationManager = LocalNotificationManager();
-  final _config = Config();
 
-  final ErrorBloc errorBloc;
-  StreamSubscription errorBlocSubscription;
+  Config _config = Config();
+  Context _context = Context();
 
-  MainBloc(this.errorBloc) {
-    errorBlocSubscription = errorBloc.listen((state) {
+  DeltaChatCore _core = DeltaChatCore();
+  DeltaChatCore get core => _core;
+
+  final ErrorBloc _errorBloc;
+  StreamSubscription _errorBlocSubscription;
+
+  MainBloc(this._errorBloc) {
+    _errorBlocSubscription = _errorBloc.listen((state) {
       if (state is ErrorStateUserVisibleError) {
         add(UserVisibleErrorEncountered(userVisibleError: state.userVisibleError));
       }
@@ -91,17 +94,39 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   @override
   Future<void> close() {
-    errorBlocSubscription.cancel();
+    _errorBlocSubscription.cancel();
     return super.close();
+  }
+
+  void reset(BuildContext context) {
+    clearPreferences();
+
+    _errorBlocSubscription.cancel();
+
+    _context.close();
+    _context = null;
+
+    _config.reset();
+    _config = null;
+
+    _closeDatabase();
+
+    _core.reset();
+    _core = null;
+    _core = DeltaChatCore();
+
+    _context = Context();
+    _config = Config();
+
+    add(PrepareApp(context: context));
   }
 
   @override
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is PrepareApp) {
       yield MainStateLoading();
-
       try {
-        final buildContext = event.context;
+        final context = event.context;
         await _initCore();
         await _openExtensionDatabase();
         await _setupDatabaseExtensions();
@@ -110,7 +135,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
           await _setupDefaultValues();
         }
         await _setupBlocs();
-        await _setupManagers(buildContext);
+        await _setupManagers(context);
         add(AppLoaded());
 
       } catch (error) {
@@ -118,12 +143,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
 
     } else if (event is AppLoaded) {
-      final bool configured = event.isConfigured ?? await _context.isConfigured();
+      final bool configured = await _context.isConfigured();
       if (configured) {
         await _setupLoggedInAppState();
       }
 
-      final bool hasAuthenticationError = event.hasAuthenticationError ?? await _checkForAuthenticationError();
+      final bool hasAuthenticationError = await _checkForAuthenticationError();
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
 
     } else if (event is Logout) {
@@ -138,7 +163,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   Future<void> _setupBlocs() async {
-    errorBloc.add(SetupListeners());
+    _errorBloc.add(SetupListeners());
   }
 
   Future<void> _setupManagers(BuildContext context) async {
@@ -169,12 +194,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   Future<void> _initCore() async {
-    await _core.init(dbName);
-  }
-
-  Future<void> _setupDatabaseExtensions() async {
-    var contactExtensionProvider = ContactExtensionProvider();
-    await contactExtensionProvider.createTable();
+    await core.init(dbName);
   }
 
   Future<void> _setupDefaultValues() async {
@@ -209,14 +229,23 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   Future<bool> isCoiSupported(Context context) async {
-    var isCoiSupported = (await context.isCoiSupported()) == 1;
+    final isCoiSupported = (await context.isCoiSupported()) == 1;
     return isCoiSupported;
   }
 
+  Future<void> _setupDatabaseExtensions() async {
+    final contactExtensionProvider = ContactExtensionProvider();
+    await contactExtensionProvider.createTable();
+  }
+
   Future<void> _openExtensionDatabase() async {
-    var core = DeltaChatCore();
-    var contactExtensionProvider = ContactExtensionProvider();
+    final contactExtensionProvider = ContactExtensionProvider();
     await contactExtensionProvider.open(core.dbPath);
+  }
+
+  Future<void> _closeDatabase() async {
+    final contactExtensionProvider = ContactExtensionProvider();
+    await contactExtensionProvider.close();
   }
 
   Future<bool> _checkForAuthenticationError() async {

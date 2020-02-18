@@ -58,6 +58,7 @@ import 'package:ox_coi/src/main/main_event_state.dart';
 import 'package:ox_coi/src/main/root.dart';
 import 'package:ox_coi/src/main/splash.dart';
 import 'package:ox_coi/src/navigation/navigation.dart';
+import 'package:ox_coi/src/platform/preferences.dart';
 import 'package:ox_coi/src/push/push_bloc.dart';
 import 'package:ox_coi/src/push/push_event_state.dart';
 import 'package:ox_coi/src/ui/custom_theme.dart';
@@ -164,13 +165,7 @@ class _OxCoiState extends State<OxCoi> {
     return BlocListener<MainBloc, MainState> (
       listener: (context, state) {
         if (state is MainStateLogout) {
-          var dcc = DeltaChatCore();
-          dcc.reset();
-
-          final core = Context();
-          core.close();
-
-          _mainBloc.add(AppLoaded(isConfigured: false, hasAuthenticationError: false));
+          _mainBloc.reset(context);
         }
       },
       child: BlocBuilder(
