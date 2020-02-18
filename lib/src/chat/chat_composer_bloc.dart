@@ -116,15 +116,17 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
 
   Future<void> startAudioRecorder() async {
     _dbPeakList = List<double>();
+    final shortPeakList = List<double>();
     _audioPath = await _flutterSound.startRecorder(null, bitRate: 64000, numChannels: 1);
     _flutterSound.setDbLevelEnabled(true);
     _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
       _dbPeakList.add((newDBPeak / 4));
+      shortPeakList.add((newDBPeak / 4));
       if (_removeFirstEntry) {
-        _dbPeakList.removeRange(0, _cutoffValue);
+        shortPeakList.removeRange(0, _cutoffValue);
       }
-      add(UpdateAudioDBPeak(dbPeakList: _dbPeakList));
+      add(UpdateAudioDBPeak(dbPeakList: shortPeakList));
     });
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
       String timer = getTimerFromTimestamp(e.currentPosition.toInt());
@@ -139,7 +141,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data){
         if(data?.duration != data?.currentPosition){
           int currentTimer = (data.currentPosition / 1000).round();
-          if(currentTimer > replayTime) {
+          if(currentTimer > replayTime && replayTime <= _dbPeakList.length) {
             replayTime = currentTimer;
             add(ReplayAudioTimeUpdate(replayTime: replayTime));
           }

@@ -51,8 +51,9 @@ class VoicePainter extends StatefulWidget {
   final List<double> dbPeakList;
   final Color color;
   final bool withChild;
+  final double width;
 
-  VoicePainter({@required this.dbPeakList, @required this.color, @required this.withChild});
+  VoicePainter({@required this.dbPeakList, @required this.color, @required this.withChild, @required this.width});
 
   @override
   _VoicePainterState createState() => _VoicePainterState();
@@ -62,19 +63,15 @@ class _VoicePainterState extends State<VoicePainter> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints){
-        return CustomPaint(
-          child: widget.withChild ? Container(
-            width: constraints.maxWidth,
-            child: CustomPaint(
-              painter: HorizontalLinePainter(color: widget.color),
-            ),
-          ) : Container(),
-          size: Size(constraints.maxWidth, 0.0),
-          painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback, color: widget.color),
-        );
-      }
+    return CustomPaint(
+      child: widget.withChild ? Container(
+        width: widget.width,
+        child: CustomPaint(
+          painter: HorizontalLinePainter(color: widget.color),
+        ),
+      ) : Container(),
+      size: Size(widget.width, 0.0),
+      painter: BarPainter(peakLevel: widget.dbPeakList, callback: callback, color: widget.color),
     );
   }
 

@@ -90,6 +90,8 @@ class BarPainter extends CustomPainter {
     var y = 0.0;
     var height = 30.0;
 
+    print("[BarPainter.paint] fhaar - ${size.width}");
+
     peakLevel?.forEach((peak) {
       y = peak > height ? y : peak;
       canvas.drawLine(Offset(x, y), Offset(x, -y), paint);
@@ -109,7 +111,7 @@ class BarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(BarPainter oldDelegate) {
-    return true;
+    return oldDelegate.peakLevel.length >= peakLevel.length;
   }
 }
 

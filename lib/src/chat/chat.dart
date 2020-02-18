@@ -78,6 +78,7 @@ import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/ui/strings.dart';
 import 'package:ox_coi/src/utils/dialog_builder.dart';
+import 'package:ox_coi/src/utils/image.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:ox_coi/src/utils/key_generator.dart';
 import 'package:ox_coi/src/utils/text.dart';
@@ -350,9 +351,9 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
                     bottom: 72.0,
                     right: 8.0,
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: CustomTheme.of(context).black.withOpacity(fade),
-                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                      decoration: ShapeDecoration(
+                        shape: getSuperEllipseShape(32.0),
+                        color: CustomTheme.of(context).surface,
                       ),
                       child: AdaptiveIconButton(
                         icon: AdaptiveSuperellipseIcon(
