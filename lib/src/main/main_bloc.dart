@@ -49,12 +49,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:ox_coi/src/background_refresh/background_refresh_manager.dart';
+import 'package:ox_coi/src/chat/chat_bloc.dart';
+import 'package:ox_coi/src/chat/chat_composer_bloc.dart';
+import 'package:ox_coi/src/chatlist/chat_list_bloc.dart';
+import 'package:ox_coi/src/contact/contact_change_bloc.dart';
+import 'package:ox_coi/src/contact/contact_item_bloc.dart';
 import 'package:ox_coi/src/contact/contact_list_bloc.dart';
 import 'package:ox_coi/src/contact/contact_list_event_state.dart';
 import 'package:ox_coi/src/customer/customer_config.dart';
 import 'package:ox_coi/src/data/config.dart';
 import 'package:ox_coi/src/data/contact_extension.dart';
 import 'package:ox_coi/src/data/contact_repository.dart';
+import 'package:ox_coi/src/data/repository.dart';
+import 'package:ox_coi/src/data/repository_manager.dart';
 import 'package:ox_coi/src/error/error_bloc.dart';
 import 'package:ox_coi/src/error/error_event_state.dart';
 import 'package:ox_coi/src/main/main_event_state.dart';
@@ -108,6 +115,33 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
     _config.reset();
     _config = null;
+
+    final Repository<Chat> chatRepository = RepositoryManager.get(RepositoryType.chat);
+    chatRepository.clear();
+
+    final Repository<ChatMsg> chatMessageRepository = RepositoryManager.get(RepositoryType.chatMessage);
+    chatMessageRepository.clear();
+
+    final Repository<Contact> contactRepository = RepositoryManager.get(RepositoryType.contact);
+    contactRepository.clear();
+
+    final contactListBloc = ContactListBloc();
+    contactListBloc.close();
+
+    final contactChangeBloc = ContactChangeBloc();
+    contactChangeBloc.close();
+
+    final contactItemBloc = ContactItemBloc();
+    contactItemBloc.close();
+
+    final chatListBloc = ChatListBloc();
+    chatListBloc.close();
+
+    final chatBloc = ChatBloc();
+    chatBloc.close();
+
+    final chatComposerBloc = ChatComposerBloc();
+    chatComposerBloc.close();
 
     _closeDatabase();
 
