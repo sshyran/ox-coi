@@ -116,7 +116,8 @@ const keyChatProfileGroupAddParticipant = "keyChatProfileGroupAddParticipant";
 
 const keyEditNameCheckIcon = "keyEditNameICheckIcon";
 const keyEditNameCloseIcon = "keyEditNameICloseIcon";
-const keyEditNameValidatableTextFormField = "keyEditNameValidatableTextFormField";
+const keyEditNameEditableProfileHeader = "keyEditNameValidatableTextFormField";
+const keyEditGroupProfilAdaptiveIconIconSource = "keyEditGroupProfilAdaptiveIconIconSource";
 
 const keyChatAddGroupParticipantsSearchIcon = "keyChatAddGroupParticipantsSearchIcon";
 const keyChatAddGroupParticipantsCheckIcon = "keyChatAddGroupParticipantsCheckIcon";

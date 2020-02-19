@@ -120,9 +120,9 @@ void main() {
       await driver.tap(find.text(testNameGroup));
       await driver.tap(find.byValueKey(keyChatNameText));
       await driver.tap(find.byValueKey(keyProfileHeaderAdaptiveIconButton));
-      await driver.tap(find.byValueKey(keyEditNameValidatableTextFormField));
+      await driver.tap(find.byValueKey(keyUserSettingsUserSettingsUsernameLabel));
       await driver.enterText(newNameTestGroup);
-      await driver.tap(find.byValueKey(keyEditNameCheckIcon));
+      await driver.tap(find.byValueKey(keyEditGroupProfilAdaptiveIconIconSource));
       expect(await driver.getText(find.text(newNameTestGroup)), newNameTestGroup);
       await driver.tap(pageBack);
       await driver.tap(pageBack);
@@ -172,6 +172,7 @@ void main() {
     test(': Check popupMenu: Leave group.', () async {
       await driver.tap(find.text(newNameTestGroup));
       await driver.tap(find.byValueKey(keyChatNameText));
+      await driver.scroll(find.byValueKey(keyChatProfileGroupAddParticipant), 0.0, -600, Duration(milliseconds: 500));
       await driver.tap(find.byValueKey(keyChatProfileGroupDelete));
       await driver.tap(find.byValueKey(keyConfirmationDialogPositiveButton));
       await driver.waitForAbsent(find.text(newNameTestGroup));
