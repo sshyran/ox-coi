@@ -92,6 +92,20 @@ class ReplayAudioTimeUpdate extends ChatComposerEvent{
 
 class ReplayAudioStopped extends ChatComposerEvent{}
 
+class StopAudioReplay extends ChatComposerEvent{}
+
+class ReplayAudioSeek extends ChatComposerEvent{
+  final int seekValue;
+
+  ReplayAudioSeek({@required this.seekValue});
+}
+
+class UpdateReplayTime extends ChatComposerEvent{
+  final int replayTime;
+
+  UpdateReplayTime({@required this.replayTime});
+}
+
 enum ChatComposerStateError {
   missingMicrophonePermission,
   missingCameraPermission,
@@ -115,8 +129,9 @@ class ChatComposerDBPeakUpdated extends ChatComposerState {
 
 class ChatComposerRecordingAudioStopped extends ChatComposerState {
   String filePath;
+  List<double> dbPeakList;
 
-  ChatComposerRecordingAudioStopped({@required this.filePath});
+  ChatComposerRecordingAudioStopped({@required this.filePath, @required this.dbPeakList});
 }
 
 class ChatComposerRecordingAudioAborted extends ChatComposerState {}

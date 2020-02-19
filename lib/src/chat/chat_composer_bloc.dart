@@ -60,6 +60,8 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
   String _audioPath;
   bool _removeFirstEntry = false;
   int _cutoffValue = 1;
+  int _replayTime = 0;
+  bool _isSeeking = false;
   List<double> _dbPeakList = List<double>();
 
   @override
@@ -79,7 +81,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
         }
       } catch (err) {
         print('startRecorder error: $err');
-        yield ChatComposerRecordingAudioStopped(filePath: null);
+        yield ChatComposerRecordingAudioStopped(filePath: null, dbPeakList: null);
       }
     } else if (event is UpdateAudioRecording) {
       yield ChatComposerRecordingAudio(timer: event.timer);
@@ -105,12 +107,20 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
       if (!_wasImageOrVideoRecordingCanceled(event.filePath, event.type)) {
         yield ChatComposerRecordingImageOrVideoStopped(filePath: event.filePath, type: event.type);
       }
-    } else if(event is ReplayAudio){
+    } else if (event is ReplayAudio) {
       _replayAudio();
-    } else if(event is ReplayAudioStopped){
+    } else if (event is ReplayAudioStopped) {
       yield ChatComposerReplayStopped();
-    } else if(event is ReplayAudioTimeUpdate){
+    } else if (event is ReplayAudioTimeUpdate) {
       yield ChatComposerReplayTimeUpdated(dbPeakList: _dbPeakList, replayTime: event.replayTime);
+    } else if (event is ReplayAudioSeek) {
+      _seekAudioPlayer(event.seekValue);
+    } else if (event is UpdateReplayTime) {
+      _isSeeking = true;
+      _replayTime = event.replayTime;
+      yield ChatComposerReplayTimeUpdated(dbPeakList: _dbPeakList, replayTime: _replayTime);
+    } else if (event is StopAudioReplay) {
+      _stopAudio();
     }
   }
 
@@ -134,27 +144,36 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     });
   }
 
+  _seekAudioPlayer(int seekValue) async {
+    _isSeeking = false;
+    _replayTime = seekValue;
+    add(ReplayAudioTimeUpdate(replayTime: _replayTime));
+    int milliSeconds = (seekValue * 1000);
+    await _flutterSound.seekToPlayer(milliSeconds);
+  }
+
   _replayAudio() async {
-    if(!_flutterSound.isPlaying) {
-      int replayTime = 0;
-      await _flutterSound.startPlayer(_audioPath);
-      _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data){
-        if(data?.duration != data?.currentPosition){
-          int currentTimer = (data.currentPosition / 1000).round();
-          if(currentTimer > replayTime && replayTime <= _dbPeakList.length) {
-            replayTime = currentTimer;
-            add(ReplayAudioTimeUpdate(replayTime: replayTime));
-          }
-        }else{
-          add(ReplayAudioStopped());
+    await _flutterSound.startPlayer(_audioPath);
+    _replayTime = 0;
+    _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data) {
+      if (data?.duration != data?.currentPosition) {
+        int currentTimer = (data.currentPosition / 1000).round();
+        if (currentTimer > _replayTime && _replayTime <= _dbPeakList.length && !_isSeeking) {
+          _replayTime = currentTimer;
+          add(ReplayAudioTimeUpdate(replayTime: _replayTime));
         }
-      });
-    }else{
-      await _flutterSound.stopPlayer();
-      if(_playerSubscription != null){
-        _playerSubscription.cancel();
-        _playerSubscription = null;
+      } else {
+        add(ReplayAudioStopped());
       }
+    });
+  }
+
+  _stopAudio() async {
+    await _flutterSound.stopPlayer();
+    _isSeeking = false;
+    if (_playerSubscription != null) {
+      _playerSubscription.cancel();
+      _playerSubscription = null;
     }
   }
 
@@ -178,7 +197,7 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     if (isAborted) {
       yield ChatComposerRecordingAudioAborted();
     } else {
-      yield ChatComposerRecordingAudioStopped(filePath: _audioPath);
+      yield ChatComposerRecordingAudioStopped(filePath: _audioPath, dbPeakList: _dbPeakList);
     }
   }
 

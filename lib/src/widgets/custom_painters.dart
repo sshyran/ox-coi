@@ -43,7 +43,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ox_coi/src/ui/custom_theme.dart';
 
 class CurvePainter extends CustomPainter {
   final color;
@@ -74,17 +73,17 @@ class BarPainter extends CustomPainter {
   final List<double> peakLevel;
   final Function callback;
   final Color color;
-  double barWidth = 3.0;
+  double barWidth;
   double spaceWidth = 1.0;
 
-  BarPainter({@required this.peakLevel, @required this.callback, @required this.color});
+  BarPainter({@required this.peakLevel, @required this.callback, @required this.color, this.barWidth = 2.0});
 
   @override
   void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = color;
-    paint.style = PaintingStyle.fill;
-    paint.strokeWidth = 2.0;
+    var paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..strokeWidth = barWidth;
 
     var x = 0.0;
     var y = 0.0;
@@ -126,6 +125,27 @@ class HorizontalLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawLine(Offset(0.0, 0.0), Offset(size.width, 0.0), _paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class VerticalLinePainter extends CustomPainter {
+  Paint _paint;
+
+  VerticalLinePainter({@required color}) {
+    _paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawLine(Offset(0.0, 10.0), Offset(0.0, -10.0), _paint);
   }
 
   @override

@@ -43,9 +43,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon_button.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
+import 'package:ox_coi/src/chat/chat_composer_event_state.dart';
 import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/ui/color.dart';
@@ -53,6 +55,8 @@ import 'package:ox_coi/src/ui/custom_theme.dart';
 import 'package:ox_coi/src/ui/dimensions.dart';
 import 'package:ox_coi/src/utils/keyMapping.dart';
 import 'package:ox_coi/src/widgets/voice_painter.dart';
+
+import 'chat_composer_bloc.dart';
 
 enum ComposerModeType {
   compose,
@@ -345,34 +349,82 @@ mixin ChatComposer {
   }
 }
 
-class AudioPlayback extends StatelessWidget {
+class AudioPlayback extends StatefulWidget {
   final List<double> dbPeakList;
   final int replayTime;
 
   AudioPlayback({@required this.dbPeakList, @required this.replayTime});
 
   @override
+  _AudioPlaybackState createState() => _AudioPlaybackState();
+}
+
+class _AudioPlaybackState extends State<AudioPlayback> {
+  int _dragUpdateValue = 0;
+
+  @override
   Widget build(BuildContext context) {
-    var width = 150.0;
-    return Container(
-      padding: const EdgeInsets.only(top: 30.0),
-      width: width,
-      child: Stack(
-        children: <Widget>[
-          VoicePainter(
-            dbPeakList: dbPeakList,
-            color: CustomTheme.of(context).onSurface,
-            withChild: true,
-            width: width,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Container(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: GestureDetector(
+            onHorizontalDragUpdate: _onHorizontalDragUpdate,
+            onHorizontalDragEnd: _onHorizontalDragEnd,
+            onTapUp: _onTapUp,
+            child: Stack(
+              children: <Widget>[
+                VoicePainter(
+                  dbPeakList: widget.dbPeakList,
+                  color: CustomTheme.of(context).onSurface,
+                  withChild: true,
+                  width: constraints.maxWidth,
+                ),
+                VoicePainter(
+                  dbPeakList: widget.dbPeakList.getRange(0, widget.replayTime).toList(),
+                  color: CustomTheme.of(context).accent,
+                  withChild: false,
+                  width: constraints.maxWidth,
+                ),
+              ],
+            ),
           ),
-          VoicePainter(
-            dbPeakList: dbPeakList.getRange(0, replayTime).toList(),
-            color: CustomTheme.of(context).accent,
-            withChild: false,
-            width: width,
-          ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    _dragUpdateValue = (details.localPosition.dx / 2).round();
+    final listLength = widget.dbPeakList.length;
+
+    if (_dragUpdateValue >= 0 && _dragUpdateValue <= listLength) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(UpdateReplayTime(replayTime: _dragUpdateValue));
+    } else if (_dragUpdateValue > listLength) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(UpdateReplayTime(replayTime: listLength));
+    } else if (_dragUpdateValue <= 0) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(UpdateReplayTime(replayTime: 0));
+    }
+  }
+
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    _seekToPosition(_dragUpdateValue);
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    final x = (details.localPosition.dx / 2).round();
+
+    _seekToPosition(x);
+  }
+
+  _seekToPosition(int position) {
+    final listLength = widget.dbPeakList.length;
+    if (position >= 0 && position <= listLength) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(ReplayAudioSeek(seekValue: position));
+    } else if (position > listLength) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(ReplayAudioSeek(seekValue: listLength));
+    } else if (position <= 0) {
+      BlocProvider.of<ChatComposerBloc>(context)?.add(ReplayAudioSeek(seekValue: 0));
+    }
   }
 }

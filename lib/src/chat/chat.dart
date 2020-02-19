@@ -219,6 +219,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
         _knownType = ChatMsg.typeVoice;
       }
       setState(() {
+        _dbPeakList = state.dbPeakList;
         _isStopped = true;
       });
     } else if (state is ChatComposerRecordingAudioAborted) {
@@ -710,6 +711,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
   _onAudioRecordingStoppedLongPress(LongPressEndDetails details) {
     double dxDifference = startLongPressDx - details.localPosition.dx;
     double dyDifference = startLongPressDy - details.localPosition.dy;
+
     if (dyDifference > 50.0) {
       _chatComposerBloc.add(StopAudioRecording());
       //TODO: Add send method
@@ -744,7 +746,7 @@ class _ChatState extends State<Chat> with ChatComposer, ChatCreateMixin, InviteM
       _replayTime = 0;
       _isPlaying = false;
     });
-    _chatComposerBloc.add(ReplayAudio());
+    _chatComposerBloc.add(StopAudioReplay());
   }
 
   _onAudioRecordingAbort() {
