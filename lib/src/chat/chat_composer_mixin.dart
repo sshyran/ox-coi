@@ -365,7 +365,7 @@ class _AudioPlaybackState extends State<AudioPlayback> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
+      builder: (context, constraints) {
         return Container(
           padding: const EdgeInsets.only(top: 30.0),
           child: GestureDetector(
@@ -375,7 +375,7 @@ class _AudioPlaybackState extends State<AudioPlayback> {
             child: Stack(
               children: <Widget>[
                 VoicePainter(
-                  dbPeakList: widget.dbPeakList,
+                  dbPeakList: (constraints.maxWidth / 3) < widget.dbPeakList.length ? widget.dbPeakList : 2,
                   color: CustomTheme.of(context).onSurface,
                   withChild: true,
                   width: constraints.maxWidth,

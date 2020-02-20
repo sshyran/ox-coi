@@ -131,8 +131,9 @@ class ChatComposerBloc extends Bloc<ChatComposerEvent, ChatComposerState> {
     _flutterSound.setDbLevelEnabled(true);
     _flutterSound.setDbPeakLevelUpdate(1.0);
     _recorderDBPeakSubscription = _flutterSound.onRecorderDbPeakChanged.listen((newDBPeak) {
-      _dbPeakList.add((newDBPeak / 4));
-      shortPeakList.add((newDBPeak / 4));
+      var newPeak = (newDBPeak / 5);
+      _dbPeakList.add(newPeak);
+      shortPeakList.add((newPeak));
       if (_removeFirstEntry) {
         shortPeakList.removeRange(0, _cutoffValue);
       }
