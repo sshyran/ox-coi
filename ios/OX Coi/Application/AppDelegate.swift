@@ -74,4 +74,11 @@ class AppDelegate: FlutterAppDelegate {
         Messaging.messaging().apnsToken = deviceToken
     }
 
+    override func applicationDidEnterBackground(_ application: UIApplication) {
+        let sel = Selector("terminateWithSuccess")
+        if application.responds(to: sel) {
+            application.perform(sel)
+        }
+    }
+
 }

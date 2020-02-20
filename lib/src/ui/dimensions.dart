@@ -55,7 +55,7 @@ const verticalPaddingSmall = 8.0;
 const verticalPadding = 16.0;
 
 // List
-const listItemHeight = 72.0;
+const listItemHeight = 48.0;
 const listItemPaddingBig = 16.0;
 const listItemPadding = 16.0;
 const listItemPaddingSmall = 4.0;
@@ -124,14 +124,14 @@ const formHorizontalPadding = 16.0;
 const formVerticalPadding = 16.0;
 
 //GroupHeader
-const groupHeaderTopPadding = 16.0;
+const groupHeaderTopPadding = 10.0;
 const groupHeaderTopPaddingBig = 24.0;
 const groupHeaderHorizontalPadding = 16.0;
-const groupHeaderBottomPadding = 8.0;
+const groupHeaderBottomPadding = 4.0;
 
 //SettingsItem
 const settingsItemHorizontalPadding = 20.0;
-const settingsItemVerticalPadding = 18.0;
+const settingsItemVerticalPadding = 8.0;
 const settingsItemIconTextPadding = 16.0;
 
 // Messages
