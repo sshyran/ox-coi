@@ -48,6 +48,7 @@ import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_icon_button.dart';
 import 'package:ox_coi/src/adaptiveWidgets/adaptive_superellipse_icon.dart';
 import 'package:ox_coi/src/chat/chat_composer_event_state.dart';
+import 'package:ox_coi/src/data/repository_stream_handler.dart';
 import 'package:ox_coi/src/l10n/l.dart';
 import 'package:ox_coi/src/l10n/l10n.dart';
 import 'package:ox_coi/src/ui/color.dart';
@@ -364,8 +365,19 @@ class _AudioPlaybackState extends State<AudioPlayback> {
 
   @override
   Widget build(BuildContext context) {
+    
     return LayoutBuilder(
       builder: (context, constraints) {
+        var replayTime = widget.replayTime;
+        var peakListLength = widget.dbPeakList.length;
+        var spaceNeeded = (peakListLength * 3);
+        var timeBla = (spaceNeeded - peakListLength);
+        replayTime = (widget.replayTime /3).round();
+        print("[_AudioPlaybackState.build] fhaar - $timeBla: $replayTime / ${widget.replayTime}");
+        if(spaceNeeded > constraints.maxWidth){
+          var start = ((peakListLength - (((peakListLength - constraints.maxWidth)).round()))/3).round();
+          widget.dbPeakList.removeRange(start, peakListLength);
+        }
         return Container(
           padding: const EdgeInsets.only(top: 30.0),
           child: GestureDetector(
@@ -375,13 +387,13 @@ class _AudioPlaybackState extends State<AudioPlayback> {
             child: Stack(
               children: <Widget>[
                 VoicePainter(
-                  dbPeakList: (constraints.maxWidth / 3) < widget.dbPeakList.length ? widget.dbPeakList : 2,
+                  dbPeakList: widget.dbPeakList,
                   color: CustomTheme.of(context).onSurface,
                   withChild: true,
                   width: constraints.maxWidth,
                 ),
                 VoicePainter(
-                  dbPeakList: widget.dbPeakList.getRange(0, widget.replayTime).toList(),
+                  dbPeakList: widget.dbPeakList.getRange(0, replayTime).toList(),
                   color: CustomTheme.of(context).accent,
                   withChild: false,
                   width: constraints.maxWidth,
