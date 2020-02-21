@@ -365,7 +365,7 @@ class _ProfileState extends State<UserProfile> {
     showConfirmationDialog(
       context: context,
       title: L10n.get(L.logoutTitle),
-      content: L10n.getFormatted(L.logoutConfirmationText, L.oxCoiName),
+      content: L10n.get(L.logoutConfirmationText),
       positiveButton: L10n.get(L.logoutTitle),
       positiveAction: _logoutAction,
       navigatable: Navigatable(Type.logout),
