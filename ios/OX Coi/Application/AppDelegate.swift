@@ -61,6 +61,8 @@ class AppDelegate: FlutterAppDelegate {
         application.setMinimumBackgroundFetchInterval(60 * 5)
         setupSharingMethodChannel()
 
+        UserDefaults.applicationShouldTerminate = false
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -75,9 +77,13 @@ class AppDelegate: FlutterAppDelegate {
     }
 
     override func applicationDidEnterBackground(_ application: UIApplication) {
-        let sel = Selector("terminateWithSuccess")
-        if application.responds(to: sel) {
-            application.perform(sel)
+        if UserDefaults.applicationShouldTerminate {
+            let sel = Selector("terminateWithSuccess")
+            if application.responds(to: sel) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    application.perform(sel)
+                }
+            }
         }
     }
 

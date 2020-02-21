@@ -254,7 +254,7 @@ class L {
   static final loginManualSetupRequired = _translationKey("We could not determine all settings automatically.");
 
   static final logoutTitle = _translationKey("Logout");
-  static final logoutConfirmationText = _translationKey("Do you really want to logout?");
+  static final logoutConfirmationText = _translationKey("Do you really want to logout?\n\nA logout will delete all your settings and you will lose the history of all chats!\n\nWhen you log out, %s will automatically terminate and must be restarted manually.");
 
   static final passwordChangedTitle = _translationKey("Password changed");
   static final passwordChangedInfoText = _translationKey("Your password has changed.\nPlease enter your new one to access your messages.");

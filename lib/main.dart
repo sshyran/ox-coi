@@ -162,32 +162,23 @@ class _OxCoiState extends State<OxCoi> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MainBloc, MainState> (
-      listener: (context, state) {
-        if (state is MainStateLogout) {
-          _mainBloc.reset(context);
-        }
-      },
-      child: BlocBuilder(
-        bloc: _mainBloc,
-        builder: (context, state) {
-          Widget child;
-          if (state is MainStateSuccess) {
-            if (state.configured && !state.hasAuthenticationError) {
-              child = Root();
-            } else if (state.configured && state.hasAuthenticationError) {
-              child = PasswordChanged(passwordChangedCallback: () => _loginSuccess(isRelogin: true));
-            } else {
-              child = Login(success: _loginSuccess);
-            }
-          } else if (state is MainStateLogout) {
-            child = Login(success: _loginSuccess);
+    return BlocBuilder(
+      bloc: _mainBloc,
+      builder: (context, state) {
+        Widget child;
+        if (state is MainStateSuccess) {
+          if (state.configured && !state.hasAuthenticationError) {
+            child = Root();
+          } else if (state.configured && state.hasAuthenticationError) {
+            child = PasswordChanged(passwordChangedCallback: () => _loginSuccess(isRelogin: true));
           } else {
-            child = Splash();
+            child = Login(success: _loginSuccess);
           }
-          return ViewSwitcher(child);
-        },
-      ),
+        } else {
+          child = Splash();
+        }
+        return ViewSwitcher(child);
+      },
     );
   }
 

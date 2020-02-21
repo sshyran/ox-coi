@@ -40,43 +40,18 @@
  * for more details.
  */
 
-import 'package:flutter/widgets.dart';
+import Foundation
 
-abstract class MainEvent {}
+extension UserDefaults {
 
-class PrepareApp extends MainEvent {
-  BuildContext context;
+    class var applicationShouldTerminate: Bool {
+        get {
+            standard.bool(forKey: #function)
+        }
+        set {
+            standard.set(newValue, forKey: #function)
+            standard.synchronize()
+        }
+    }
 
-  PrepareApp({@required this.context});
-}
-
-class LoadApp extends MainEvent {}
-
-class AppLoaded extends MainEvent {}
-
-class Logout extends MainEvent {}
-
-class UserVisibleErrorEncountered extends MainEvent {
-  final userVisibleError;
-
-  UserVisibleErrorEncountered({@required this.userVisibleError});
-}
-
-abstract class MainState {}
-
-class MainStateInitial extends MainState {}
-
-class MainStateLoading extends MainState {}
-
-class MainStateSuccess extends MainState {
-  bool configured;
-  bool hasAuthenticationError;
-
-  MainStateSuccess({@required this.configured, @required this.hasAuthenticationError});
-}
-
-class MainStateFailure extends MainState {
-  String error;
-
-  MainStateFailure({@required error});
 }

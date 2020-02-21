@@ -362,19 +362,20 @@ class _ProfileState extends State<UserProfile> {
   }
 
   void _showLogoutDialog({BuildContext context}) {
-    // ignore: close_sinks
-    final mainBloc = BlocProvider.of<MainBloc>(context);
-
     showConfirmationDialog(
       context: context,
       title: L10n.get(L.logoutTitle),
-      content: L10n.get(L.logoutConfirmationText),
+      content: L10n.getFormatted(L.logoutConfirmationText, L.oxCoiName),
       positiveButton: L10n.get(L.logoutTitle),
-      positiveAction: () => {
-        mainBloc.add(Logout())
-      },
+      positiveAction: _logoutAction,
       navigatable: Navigatable(Type.logout),
     );
+  }
+
+  void _logoutAction() {
+    // ignore: close_sinks
+    final mainBloc = BlocProvider.of<MainBloc>(context);
+    mainBloc.add(Logout());
   }
 
   void _changeTheme() async {

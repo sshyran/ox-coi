@@ -105,56 +105,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return super.close();
   }
 
-  void reset(BuildContext context) {
-    clearPreferences();
-
-    _errorBlocSubscription.cancel();
-
-    _context.close();
-    _context = null;
-
-    _config.reset();
-    _config = null;
-
-    final Repository<Chat> chatRepository = RepositoryManager.get(RepositoryType.chat);
-    chatRepository.clear();
-
-    final Repository<ChatMsg> chatMessageRepository = RepositoryManager.get(RepositoryType.chatMessage);
-    chatMessageRepository.clear();
-
-    final Repository<Contact> contactRepository = RepositoryManager.get(RepositoryType.contact);
-    contactRepository.clear();
-
-    final contactListBloc = ContactListBloc();
-    contactListBloc.close();
-
-    final contactChangeBloc = ContactChangeBloc();
-    contactChangeBloc.close();
-
-    final contactItemBloc = ContactItemBloc();
-    contactItemBloc.close();
-
-    final chatListBloc = ChatListBloc();
-    chatListBloc.close();
-
-    final chatBloc = ChatBloc();
-    chatBloc.close();
-
-    final chatComposerBloc = ChatComposerBloc();
-    chatComposerBloc.close();
-
-    _closeDatabase();
-
-    _core.reset();
-    _core = null;
-    _core = DeltaChatCore();
-
-    _context = Context();
-    _config = Config();
-
-    add(PrepareApp(context: context));
-  }
-
   @override
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is PrepareApp) {
@@ -186,7 +136,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       yield MainStateSuccess(configured: configured, hasAuthenticationError: hasAuthenticationError);
 
     } else if (event is Logout) {
-      yield MainStateLogout();
+      await _logout();
     }
 
     if (event is UserVisibleErrorEncountered) {
@@ -277,12 +227,13 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     await contactExtensionProvider.open(core.dbPath);
   }
 
-  Future<void> _closeDatabase() async {
-    final contactExtensionProvider = ContactExtensionProvider();
-    await contactExtensionProvider.close();
-  }
-
   Future<bool> _checkForAuthenticationError() async {
     return await getPreference(preferenceHasAuthenticationError) ?? false;
   }
+
+  Future<void> _logout() async {
+    clearPreferences();
+    _context.logout();
+  }
+
 }
