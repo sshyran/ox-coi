@@ -80,7 +80,7 @@ class AppDelegate: FlutterAppDelegate {
         if UserDefaults.applicationShouldTerminate {
             let sel = Selector("terminateWithSuccess")
             if application.responds(to: sel) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     application.perform(sel)
                 }
             }

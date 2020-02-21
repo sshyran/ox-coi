@@ -131,7 +131,7 @@ const groupHeaderBottomPadding = 4.0;
 
 //SettingsItem
 const settingsItemHorizontalPadding = 20.0;
-const settingsItemVerticalPadding = 8.0;
+const settingsItemVerticalPadding = 10.0;
 const settingsItemIconTextPadding = 16.0;
 
 // Messages
